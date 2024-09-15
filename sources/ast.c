@@ -8,7 +8,7 @@ t_astnode	*ast_make_node(t_shell *shell, int type, t_astnode *left, t_astnode *r
 	if (!n)
 	{
 		printf("Error: malloc failed on line %d in file %s\n", __LINE__, __FILE__);
-		shell->exit_code = 1;
+		shell->parse_error = 1;
 		n = 0;
 		return (0);
 	}
@@ -30,7 +30,7 @@ t_astnode	*ast_make_cmd(t_shell *shell, char *s)
 	if (!n)
 	{
 		printf("Error: malloc failed on line %d in file %s\n", __LINE__, __FILE__);
-		shell->exit_code = 1;
+		shell->parse_error = 1;
 		n = 0;
 		return (0);
 	}

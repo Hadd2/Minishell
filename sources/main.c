@@ -1,22 +1,5 @@
 #include "minishell.h"
 
-static char	*ft_strndup2(char *str, int len)
-{
-	char	*ret;
-	char	*head;
-
-	if (len == 0)
-		return (0);
-	ret = (char *)malloc(sizeof(char) * (len + 1));
-	if (!ret)
-		return (0);
-	head = ret;
-	while (*str && len--)
-		*ret++ = *str++;
-	*ret = 0;
-	return (head);
-}
-
 static void	init_shell(t_shell *shell, char **env)
 {
 	int		i;
@@ -33,7 +16,7 @@ static void	init_shell(t_shell *shell, char **env)
 	i = 0;
 	while (shell->ht && env && env[i])
 	{
-        k = ft_strndup2(env[i], ft_strchr(env[i], '=') - env[i]);
+        k = ft_strndup(env[i], ft_strchr(env[i], '=') - env[i]);
         v = ft_strdup(ft_strchr(env[i], '=') + 1);
         hashtable_insert(shell->ht, k, v);
 /*
@@ -104,11 +87,9 @@ int main(int argc, char **argv, char **env)
 			continue;
 		}
 
-/*
 #ifdef DEBUG	
         print_ast(shell.ast);
 #endif
-*/
 		shell.ast = parse_logical(&shell, &shell.cl);
         print_ast(shell.ast);
 		if (shell.parse_error == 0)
@@ -123,7 +104,6 @@ int main(int argc, char **argv, char **env)
 	//exit_shell(&shell);
 	return (0);
 }
-
 /*
 int main(int argc, char **argv, char **env)
 {
@@ -168,9 +148,9 @@ int main(int argc, char **argv, char **env)
         }
         shell.headcl = NULL;
     }
-
-    exit_shell(&shell);
-    return 0;
+	hashtable_free(shell.ht);
+    //exit_shell(&shell);
+	exit(shell.exit_code);
 }
 */
 /* TODO SHELL STRUCTURE

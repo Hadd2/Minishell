@@ -51,13 +51,14 @@ void	free_ast(t_astnode *n)
 		free_cmd(n->cmd);
 	if (n->ps)
 		free(n->ps);
-	if (n->type == PIPE)
+	if (n->pipein != -1)
 	{
-		if (n->pipein != -1)
-			close(n->pipein);
-		if (n->pipeout != -1)
-			close(n->pipeout);
+		close(n->pipein);
 		n->pipein = -1;
+	}
+	if (n->pipeout != -1)
+	{
+		close(n->pipeout);
 		n->pipeout = -1;
 	}
 	free(n);

@@ -22,9 +22,6 @@ static t_astnode	*parse_command(t_shell *shell, char **str)
 		*(cmd + i++) = *s++;
 	}
 	*(cmd + i) = 0;
-	//debug
-	//printf("len %d, string %s\n", len, *str);
-	//printf("cmd: %s \n", cmd);
 	return (ast_make_cmd(shell, cmd));
 }
 

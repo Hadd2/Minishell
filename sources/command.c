@@ -56,14 +56,6 @@ void	expand_quotes(char **tab)
 char	**make_params(char *str)
 {
 	char	**ret;
-
-	ret = ft_split(str, ASCII_SPACE);
-	return (ret);
-}
-/*
-char	**make_params(char *str)
-{
-	char	**ret;
 	char	quotes;
 	char	*head;
 
@@ -88,55 +80,6 @@ char	**make_params(char *str)
 	ret = ft_split(head, ASCII_SPACE);
 	return (ret);
 }
-*/
-
-char	*strjoin(char *s1, char *s2, char sep)
-{
-	char	*ret;
-	char	*head;
-
-	ret = (char *)malloc(sizeof(char) * (ft_strlen(s1) + ft_strlen(s2) + 2));
-	if (!ret)
-		return (0);
-	head = ret;
-	while (*s1)
-		*ret++ = *s1++;
-	*ret++ = sep;
-	while (*s2)
-		*ret++ = *s2++;
-	*ret = 0;
-	return (head);
-}
-/*
-char	*make_path(char **env, char *cmdname)
-{
-	char	**paths;
-	char	*path;
-	int		idx;
-
-	if (access(cmdname, F_OK) == 0)
-		return (cmdname);
-	while (env && *env)
-	{
-		if (ft_strncmp(*env, "PATH=", 5) == 0)
-			break ;
-		env++;
-	}
-	if (!*env)
-		return (0);
-	paths = ft_split(*env + 5, ':');
-	idx = 0;
-	while (paths && paths[idx])
-	{
-		path = strjoin(paths[idx], cmdname, '/');
-		if (access(path, F_OK) == 0)
-			return (free_tab(paths), path);
-		free(path);
-		idx++;
-	}
-	return (free_tab(paths), NULL);
-}
-*/
 
 char	*make_path(t_shell  *shell, char *cmdname)
 {
@@ -146,10 +89,7 @@ char	*make_path(t_shell  *shell, char *cmdname)
 	int		idx;
 
 	if (access(cmdname, F_OK) == 0)
-	{
-		printf("ACCES");
 		return (cmdname);
-	}
 	item = hashtable_search(shell->ht, "PATH");
 	if (!item)
 		return (0);
@@ -157,7 +97,7 @@ char	*make_path(t_shell  *shell, char *cmdname)
 	idx = 0;
 	while (paths && paths[idx])
 	{
-		path = strjoin(paths[idx], cmdname, '/');
+		path = ft_strjoin_slash(paths[idx], cmdname, '/');
 		if (access(path, F_OK) == 0)
 			return (free_tab(paths), path);
 		free(path);
@@ -185,27 +125,11 @@ t_cmd	*init_command(t_shell *shell)
 	c->outfile = 0;
 	c->fdin = -1;
 	c->fdout = -1;
-	c->heredoc = FALSE;
-	c->redirout = FALSE;
-	c->redirin = FALSE;
-	c->redirappend = FALSE;
+	c->heredoc = false;
+	c->redirout = false;
+	c->redirin = false;
+	c->redirappend = false;
 	return (c);
-}
-
-void	remove_whitespace(char **str)
-{
-	char c;
-	char *h;
-
-	h = *str;
-	while (*(*str))
-	{
-		c = (*(*str));
-		if (c == '\t' || c == '\n' || c == '\v' || c == '\r')
-			*(*str) = ' ';
-		(*str)++;
-	}
-	*str = h;
 }
 
 t_cmd	*make_command(t_shell *shell, t_astnode *n, char *str)
@@ -260,5 +184,6 @@ t_cmd	*make_command(t_shell *shell, t_astnode *n, char *str)
 	}
     */
 	expand_quotes(cmd->params);
+	expand_env_variables(shell ,cmd->params);
 	return (cmd);
 }

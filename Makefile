@@ -16,6 +16,8 @@ SRC_FILES = ast.c \
 			hashtable.c \
 			hashtable_utils.c \
 			free.c \
+			env_variable.c \
+			string.c \
 			redir.c
 SRC_OBJ = ${addprefix ${SRC_PATH}, ${SRC_FILES}}
 
@@ -26,7 +28,7 @@ OBJECTS = ${addprefix ${OBJ_PATH}, ${OBJ_FILES}}
 all : ${NAME}
 
 ${NAME} : ${OBJECTS} ${LIBFT}
-	${CC} ${CFLAGS} ${INCLUDES}	${OBJECTS} ${LINK} -o $@
+	${CC} -DDEBUG ${CFLAGS} ${INCLUDES}	${OBJECTS} ${LINK} -o $@
 
 ${LIBFT} :
 	make -C ${LIB_PATH}

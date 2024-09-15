@@ -11,8 +11,6 @@
 # include <readline/readline.h>
 # include "../includes/libft.h"
 # define ASCII_SPACE ' '
-# define FALSE 0
-# define TRUE 1
 # define TMP_FILENAME "ASJU43fs8a8i@#98jsa"
 # define HT_MAX_LOAD 0.75
 
@@ -91,26 +89,45 @@ typedef struct s_shell
 	t_astnode	*ast;
 }	t_shell;
 
+/* ast */
 t_astnode	*ast_make_node(t_shell *shell,int type, t_astnode *left, t_astnode *right);
 t_astnode	*ast_make_cmd(t_shell *shell, char *s);
 void		find_right_leftmost(t_astnode *n, int fd);
 void		find_all_leaf_left(t_astnode *n, int fd);
-void		ast_interpret(t_shell *shell, t_astnode *n);
+
+/* parse */
 t_astnode	*parse_logical(t_shell *shell, char **str);
+
+/* parse utils */
 bool		nothing_to_parse(char *str, char c);
 int			is_whitespace(char c);
 int			is_delimiter(char c);
 int			skip_whitespace(char **str);
 void		skip_quotes(char **str);
 
+/* env variable */
+void		expand_env_variables(t_shell *shell, char **tab);
+
+/* string */
+char		*ft_strndup(char *str, int len);
+char		*ft_strjoin_slash(char *s1, char *s2, char sep);
+int			only_capital_letter(char *str);
+void		remove_whitespace(char **str);
+
+/*	interpret */
 void		execute_cmd(t_shell *shell, t_astnode *n);
 void		execute_pipe(t_shell *shell, t_astnode *n);
+void		ast_interpret(t_shell *shell, t_astnode *n);
+
+/* command */
 t_cmd		*make_command(t_shell *shell, t_astnode *n, char *str);
 
+/* redir */
 void		get_redirs(t_cmd *cmd, char *str);
 char		*remove_redirs(char *str);
 int			skip_whitespace(char **str);
 
+/* free */
 void		free_tab(char **tab);
 void 		free_cmd(t_cmd *cmd);
 void		free_ast(t_astnode *n);

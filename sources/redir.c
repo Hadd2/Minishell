@@ -10,8 +10,8 @@ static void	previous_redir(t_cmd *cmd, int type)
 			free(cmd->delimiter);
 		cmd->delimiter = 0;
 		cmd->infile = 0;
-		cmd->heredoc = FALSE;
-		cmd->redirin = FALSE;
+		cmd->heredoc = false;
+		cmd->redirin = false;
 	}
 	else if (type == REDIRAPPEND || type == REDIROUT)
 	{
@@ -20,8 +20,8 @@ static void	previous_redir(t_cmd *cmd, int type)
 		if (cmd->redirappend)
 			free(cmd->outfile);
 		cmd->outfile = 0;
-		cmd->redirappend = FALSE;
-		cmd->redirout = FALSE;
+		cmd->redirappend = false;
+		cmd->redirout = false;
 	}
 }
 
@@ -30,22 +30,22 @@ static void	get_redir_type(t_cmd *cmd, int type, char *str)
 	previous_redir(cmd, type);
 	if (type == HEREDOC)
 	{
-		cmd->heredoc = TRUE;
+		cmd->heredoc = true;
 		cmd->delimiter = str;
 	}
 	else if (type == REDIRIN)
 	{
-		cmd->redirin = TRUE;
+		cmd->redirin = true;
 		cmd->infile = str;
 	}
 	else if (type == REDIRAPPEND)
 	{
-		cmd->redirappend = TRUE;
+		cmd->redirappend = true;
 		cmd->outfile = str;
 	}
 	else if (type == REDIROUT)
 	{
-		cmd->redirout = TRUE;
+		cmd->redirout = true;
 		cmd->outfile = str;
 	}
 }
