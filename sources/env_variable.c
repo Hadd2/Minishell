@@ -6,13 +6,13 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:45:47 by habernar          #+#    #+#             */
-/*   Updated: 2024/09/15 22:45:47 by habernar         ###   ########.fr       */
+/*   Updated: 2024/09/15 22:55:57 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static char	*expand_alpha_min(char *str, char *dsign)
+static char	*erase_alpha(char *str, char *dsign)
 {
 	char	*s;
 	int		i;
@@ -31,7 +31,7 @@ static char	*expand_alpha_min(char *str, char *dsign)
 	return (s);
 }
 
-static char	*expand_alpha_maj(t_shell *shell, char *str, char *dsign)
+static char	*expand_alpha(t_shell *shell, char *str, char *dsign)
 {
 	char	*s;
 	char	*key;
@@ -47,7 +47,7 @@ static char	*expand_alpha_maj(t_shell *shell, char *str, char *dsign)
 	item = hashtable_search(shell->ht, key);
 	free(key);
 	if (!item && !item->value)
-		return (expand_alpha_min(str, dsign));
+		return (erase_alpha(str, dsign));
 	s = (char *)malloc(sizeof(char) * (ft_strlen(str) - i + ft_strlen(item->value) + 1));
 	if (!s)
 		return (0);
@@ -85,12 +85,7 @@ static char	*expanded_string(t_shell *shell, char *str, char *dsign)
 	if (*(dsign + 1) && *(dsign + 1) == '?')
 		return (expand_exit_value(shell, str, dsign));
 	else if (*(dsign + 1)  && ft_isalpha(*(dsign + 1)))
-	{
-		if (only_capital_letter(dsign + 1))
-			return (expand_alpha_maj(shell, str, dsign));
-		else
-			return (expand_alpha_min(str, dsign));
-	}
+		return (expand_alpha(shell, str, dsign));
 	else
 		return (0);
 }
