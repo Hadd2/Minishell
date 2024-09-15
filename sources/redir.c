@@ -129,6 +129,8 @@ char	*remove_redirs(char *str)
 		else
 			i++;
 	}
+#ifdef DEBUG
 	printf("rmredir: %s\n", str);
+#endif
 	return (str);
 }

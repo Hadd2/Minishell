@@ -14,7 +14,7 @@ static t_astnode	*parse_command(t_shell *shell, char **str)
 	if (!cmd)
 	{
 		printf("Error: malloc failed on line %d in file %s\n", __LINE__, __FILE__);
-		return (shell->exit_code = 1, (t_astnode *)0);
+		return (shell->parse_error = 1, (t_astnode *)0);
 	}
 	int i = 0;
 	while (i < len)
@@ -41,7 +41,7 @@ static t_astnode	*parse_parenthese(t_shell *shell, char **str)
 		if (*(*str) != ')')
 		{
 			printf("Error: parsor detected missing ')'\n");
-			return (shell->exit_code = 1, head);
+			return (shell->parse_error = 1, head);
 		}
 		(*str)++;
 	}
@@ -65,7 +65,7 @@ static t_astnode	*parse_pipe(t_shell *shell, char **str)
 	{
 		(*str)++;
 		if (nothing_to_parse(*str, '|'))
-			return (shell->exit_code = 1, left);
+			return (shell->parse_error = 1, left);
 		right = parse_pipe(shell, str);
 		left = ast_make_node(shell, PIPE, left, right);
 	}
@@ -91,7 +91,7 @@ t_astnode	*parse_logical(t_shell *shell, char **str)
 			type = LOGICAL_OR;
 		(*str) += 2;
 		if (nothing_to_parse(*str, *(*str - 2)))
-			return (shell->exit_code = 1, left);
+			return (shell->parse_error = 1, left);
 		right = parse_logical(shell, str);
 		left = ast_make_node(shell, type, left, right);
 	}

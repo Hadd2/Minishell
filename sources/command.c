@@ -1,5 +1,58 @@
 #include "minishell.h"
 
+void	expand_quotes(char **tab)
+{
+	int	i;
+	char *str;
+	char quotes;
+
+	i = 0;
+	while (tab && tab[i])
+	{
+		if (ft_strchr(tab[i], '\'') != 0)
+		{
+			str = tab[i];
+			while (*str)
+			{
+				if (*str == '\'')
+				{
+					quotes = *str++;
+					while (*str && *str != quotes)
+					{
+						if (*str == 31)
+							*str = ASCII_SPACE;
+						str++;
+					}
+					if (*str == quotes)
+						quotes = 0;
+				}
+				str++;
+			}
+		}
+		if (ft_strchr(tab[i], '\"') != 0)
+		{
+			str = tab[i];
+			while (*str)
+			{
+				if (*str == '\"')
+				{
+					quotes = *str++;
+					while (*str && *str != quotes)
+					{
+						if (*str == 31)
+							*str = ASCII_SPACE;
+						str++;
+					}
+					if (*str == quotes)
+						quotes = 0;
+				}
+				str++;
+			}
+		}
+		i++;
+	}
+}
+
 char	**make_params(char *str)
 {
 	char	**ret;
@@ -7,6 +60,35 @@ char	**make_params(char *str)
 	ret = ft_split(str, ASCII_SPACE);
 	return (ret);
 }
+/*
+char	**make_params(char *str)
+{
+	char	**ret;
+	char	quotes;
+	char	*head;
+
+	quotes = 0;
+	head = str;
+	while (*str)
+	{
+		if (*str == '\'' || *str == '\"')
+		{
+			quotes = *str++;
+			while (*str && *str != quotes)
+			{
+				if (*str == ASCII_SPACE)
+					*str = 31;
+				str++;
+			}
+			if (*str == quotes)
+				quotes = 0;
+		}
+		str++;
+	}
+	ret = ft_split(head, ASCII_SPACE);
+	return (ret);
+}
+*/
 
 char	*strjoin(char *s1, char *s2, char sep)
 {
@@ -64,7 +146,10 @@ char	*make_path(t_shell  *shell, char *cmdname)
 	int		idx;
 
 	if (access(cmdname, F_OK) == 0)
+	{
+		printf("ACCES");
 		return (cmdname);
+	}
 	item = hashtable_search(shell->ht, "PATH");
 	if (!item)
 		return (0);
@@ -174,5 +259,6 @@ t_cmd	*make_command(t_shell *shell, t_astnode *n, char *str)
 		exit_shell(shell);
 	}
     */
+	expand_quotes(cmd->params);
 	return (cmd);
 }

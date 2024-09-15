@@ -14,12 +14,13 @@ void	free_tab(char **tab)
 		}
 		free(tab);
 	}
+	tab = 0;
 }
 
 void 	free_cmd(t_cmd *cmd)
 {
-	if (cmd->params)
-		free_tab(cmd->params);
+	if (!cmd)
+		return ;
 	if (cmd->heredoc)
 	{
 		unlink(TMP_FILENAME);
@@ -32,16 +33,21 @@ void 	free_cmd(t_cmd *cmd)
 		free(cmd->outfile);
 	if (cmd->path)
 		free(cmd->path);
+	if (cmd->params)
+		free_tab(cmd->params);
 	free(cmd);
+	cmd = 0;
 }
 
 void	free_ast(t_astnode *n)
 {
+	if (!n)
+		return ;
 	if (n->left)
 		free_ast(n->left);
 	if (n->right)
 		free_ast(n->right);
-	if (n->type == CMD && n->cmd)
+	if (n->cmd)
 		free_cmd(n->cmd);
 	if (n->ps)
 		free(n->ps);
@@ -51,8 +57,11 @@ void	free_ast(t_astnode *n)
 			close(n->pipein);
 		if (n->pipeout != -1)
 			close(n->pipeout);
+		n->pipein = -1;
+		n->pipeout = -1;
 	}
 	free(n);
+	n = 0;
 }
 
 void	exit_shell(t_shell *shell)

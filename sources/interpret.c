@@ -97,6 +97,7 @@ void handle_fd(t_shell *shell, t_astnode *n)
 		{
 			dup2(n->cmd->fdin, STDIN_FILENO);
 			close(n->cmd->fdin);
+			n->cmd->fdin = -1;
 		}
 	}
 	if (n->cmd->redirout || n->cmd->redirappend)
@@ -105,6 +106,7 @@ void handle_fd(t_shell *shell, t_astnode *n)
 		{
 			dup2(n->cmd->fdout, STDOUT_FILENO);
 			close(n->cmd->fdout);
+			n->cmd->fdout = -1;
 		}
 	}
 }
@@ -116,7 +118,7 @@ void 	print_cmd(t_cmd *cmd)
 	{
 		int i = 0;
 		while (cmd->params[i])
-			printf("%s\n", cmd->params[i++]);
+			printf("param:%s\n", cmd->params[i++]);
 	}
 	if (cmd->heredoc && cmd->delimiter)
 		printf("%s\n", cmd->delimiter);
@@ -125,7 +127,7 @@ void 	print_cmd(t_cmd *cmd)
 	if (cmd->outfile)
 		printf("%s\n", cmd->outfile);
 	if (cmd->path)
-		printf("%s\n", cmd->path);
+		printf("path:%s\n", cmd->path);
 }
 
 void	parent_close_pipe(t_astnode *n)
@@ -147,11 +149,13 @@ void	execute_cmd(t_shell *shell, t_astnode *n)
 	n->cmd = make_command(shell, n, n->ps);
 	if (!n->cmd)
 		return ;
-	//debug
+#ifdef DEBUG
 	print_cmd(n->cmd);
+#endif
 	/*
 	if (BUILTIN)
 	 */
+	print_cmd(n->cmd);
 	n->cmd->pid = fork();
 	if (n->cmd->pid == -1)
 	{
@@ -190,6 +194,8 @@ void	execute_pipe(t_shell *shell, t_astnode *n)
 
 void ast_interpret(t_shell *shell, t_astnode *n)
 {
+	if (!n)
+		return ;
 	if (n->type == LOGICAL_OR)
 	{
 		/* EXEC ONLY IF NODE LEFT SUCCEED */
@@ -214,5 +220,12 @@ void ast_interpret(t_shell *shell, t_astnode *n)
 	{
 		execute_cmd(shell, n);
 	}
+	/*
+	if (n->cmd)
+	{
+		free_cmd(n->cmd);
+		n->cmd = 0;
+	}
+	*/
 }
 

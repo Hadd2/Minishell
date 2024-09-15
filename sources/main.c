@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-static char	*ft_strndup(char *str, int len)
+static char	*ft_strndup2(char *str, int len)
 {
 	char	*ret;
 	char	*head;
@@ -24,16 +24,26 @@ static void	init_shell(t_shell *shell, char **env)
 	char	*v;
 
 	shell->exit_code = 0;
+	shell->parse_error = 0;
 	shell->cl = 0;
+	shell->headcl = 0;
 	shell->ast = 0;
 	shell->ht = hashtable_init();
 	shell->env = env;
 	i = 0;
-	while (env && env[i])
+	while (shell->ht && env && env[i])
 	{
-        k = ft_strndup(env[i], ft_strchr(env[i], '=') - env[i]);
+        k = ft_strndup2(env[i], ft_strchr(env[i], '=') - env[i]);
         v = ft_strdup(ft_strchr(env[i], '=') + 1);
         hashtable_insert(shell->ht, k, v);
+/*
+#ifdef DEBUG
+		DEBUG_LOG("Inserted env var: %s=%s", k, v);
+#endif
+*/
+#ifdef DEBUG
+		DEBUG_LOG("Inserted env var: %s=%s", k, v);
+#endif
         i++;
     }
 }
@@ -63,7 +73,10 @@ static int	parsable(char *str)
 		else 
 			str++;
 	}
-	//printf("%d \"\n%d (\n%d )\n%d \'\n", ascii['\"'], ascii['('], ascii[')'], ascii['\'']);
+
+#ifdef DEBUG
+	DEBUG_LOG("Parsing input: ASCII counts: \" %d, ' %d, ( %d, ) %d", ascii['\"'], ascii['\''], ascii['('], ascii[')']);
+#endif
 	return (!ascii['\\'] && !ascii[';'] && ascii['\''] % 2 == 0 && ascii['\"'] % 2 == 0 && ascii['('] == ascii[')']);
 }
 
@@ -74,21 +87,31 @@ int main(int argc, char **argv, char **env)
 	(void)argc, (void)argv;
 	init_shell(&shell, env);
 	//shell.cl = readline("$");
+	//char str[200];
+	//size_t size = 200;
 	shell.cl = get_next_line(STDIN_FILENO);
 	while (shell.cl)
 	{
+		//printf("%s> ", getcwd(str,	size));
+		//shell.cl = get_next_line(STDIN_FILENO);
+		shell.parse_error = 0;
 		shell.headcl = shell.cl;
 		if (!parsable(shell.cl))
 		{
 			free(shell.headcl);
 			shell.headcl = 0;
 			shell.cl = get_next_line(STDIN_FILENO);
-			//shell.cl = readline("$");
 			continue;
 		}
+
+/*
+#ifdef DEBUG	
+        print_ast(shell.ast);
+#endif
+*/
 		shell.ast = parse_logical(&shell, &shell.cl);
-		print_ast(shell.ast);
-		if (shell.exit_code == 0)
+        print_ast(shell.ast);
+		if (shell.parse_error == 0)
 			ast_interpret(&shell, shell.ast);
 		free(shell.headcl);
 		free_ast(shell.ast);
@@ -96,10 +119,60 @@ int main(int argc, char **argv, char **env)
 		shell.headcl = 0;
 		shell.cl = get_next_line(STDIN_FILENO);
 	}
-	exit_shell(&shell);
+	hashtable_free(shell.ht);
+	//exit_shell(&shell);
 	return (0);
 }
 
+/*
+int main(int argc, char **argv, char **env)
+{
+    t_shell shell;
+    char prompt[256];
+    
+    (void)argc;
+    (void)argv;
+    init_shell(&shell, env);
+
+    while (1)
+    {
+        // Afficher le prompt
+        if (getcwd(prompt, sizeof(prompt)) != NULL)
+            printf("%s$ ", prompt);
+        else
+            printf("$ ");  // Fallback si getcwd échoue
+        
+        // Lire l'entrée utilisateur
+        shell.cl = readline(0);
+        if (shell.cl == NULL) // Gestion de EOF (Ctrl+D)
+            break;
+
+        // Traiter la commande si elle n'est pas vide
+        if (*shell.cl != '\0')
+        {
+            shell.parse_error = 0;
+            shell.headcl = shell.cl;
+
+            if (parsable(shell.cl))
+            {
+                shell.ast = parse_logical(&shell, &shell.cl);
+#ifdef DEBUG    
+                print_ast(shell.ast);
+#endif
+                if (shell.parse_error == 0)
+                    ast_interpret(&shell, shell.ast);
+                
+                free_ast(shell.ast);
+                shell.ast = NULL;
+            }
+        }
+        shell.headcl = NULL;
+    }
+
+    exit_shell(&shell);
+    return 0;
+}
+*/
 /* TODO SHELL STRUCTURE
  * SIGNAL
  * ENV + ENVVARIABLE

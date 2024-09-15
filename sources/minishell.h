@@ -16,6 +16,12 @@
 # define TMP_FILENAME "ASJU43fs8a8i@#98jsa"
 # define HT_MAX_LOAD 0.75
 
+# ifdef DEBUG
+    #define DEBUG_LOG(fmt, ...) printf("DEBUG: " fmt "\n", ##__VA_ARGS__)
+# else
+    #define DEBUG_LOG(fmt, ...) // Ne rien faire si DEBUG n'est pas défini
+# endif
+
 typedef enum e_file
 {
 	HEREDOC,
@@ -77,6 +83,7 @@ typedef struct s_astnode
 typedef struct s_shell
 {
 	int			exit_code;
+	int			parse_error;
 	char		*cl;
 	char		*headcl;
 	char		**env;
