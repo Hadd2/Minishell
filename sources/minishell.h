@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   minishell.h                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/09/15 22:42:35 by habernar          #+#    #+#             */
+/*   Updated: 2024/09/15 22:42:36 by habernar         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
@@ -143,6 +155,12 @@ void		hashtable_delete(t_hashtable *ht, const char *k);
 t_item		*hashtable_search(t_hashtable *ht, const char *k);
 void		hashtable_resize(t_hashtable *ht);
 bool		hashtable_insert(t_hashtable *ht, char *k, char *v);
+
+/* file */
+void		get_here_doc(t_shell *shell, t_cmd *cmd);
+void		open_file(t_shell *shell, t_cmd *cmd);
+void		handle_fd(t_shell *shell, t_astnode *n);
+void		parent_close_pipe(t_astnode *n);
 
 /* debug */
 void 		print_ast(t_astnode *n);

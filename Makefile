@@ -18,6 +18,7 @@ SRC_FILES = ast.c \
 			free.c \
 			env_variable.c \
 			string.c \
+			file.c \
 			redir.c
 SRC_OBJ = ${addprefix ${SRC_PATH}, ${SRC_FILES}}
 
