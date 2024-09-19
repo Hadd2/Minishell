@@ -6,7 +6,7 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:43:42 by habernar          #+#    #+#             */
-/*   Updated: 2024/09/15 22:43:43 by habernar         ###   ########.fr       */
+/*   Updated: 2024/09/19 18:30:38 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,17 +14,19 @@
 
 bool	nothing_to_parse(char *str, char c)
 {
+    (void)c;
+    char *head;
 	if (!str || !*str)
-	{
-		printf("Error: nothing to parse after %c\n", c);
 		return (true);
-	}
+    head = str;
 	while (*str && is_whitespace(*str))
 		str++;
-	if (*str)
-		return (false);
-	printf("Error: nothing to parse after %c\n", c);
-	return (true);
+	if (!*str || (*str && is_delimiter(*str) && (*head != '(')))
+    {
+        printf("Error: nothing to parse\n");
+        return (true);
+    }
+	return (false);
 }
 
 int	is_whitespace(char c)

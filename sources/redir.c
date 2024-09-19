@@ -6,60 +6,29 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:43:39 by habernar          #+#    #+#             */
-/*   Updated: 2024/09/15 22:43:40 by habernar         ###   ########.fr       */
+/*   Updated: 2024/09/19 19:32:09 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static void	previous_redir(t_cmd *cmd, int type)
+static void	get_redir_node(t_cmd *cmd, int type, char *str)
 {
-	if (type == HEREDOC || type == REDIRIN)
-	{
-		if (cmd->redirin)
-			free(cmd->infile);
-		if (cmd->heredoc)
-			free(cmd->delimiter);
-		cmd->delimiter = 0;
-		cmd->infile = 0;
-		cmd->heredoc = false;
-		cmd->redirin = false;
-	}
-	else if (type == REDIRAPPEND || type == REDIROUT)
-	{
-		if (cmd->redirout)
-			free(cmd->outfile);
-		if (cmd->redirappend)
-			free(cmd->outfile);
-		cmd->outfile = 0;
-		cmd->redirappend = false;
-		cmd->redirout = false;
-	}
-}
+    t_list  *lnode;
+    t_file  *fnode;
 
-static void	get_redir_type(t_cmd *cmd, int type, char *str)
-{
-	previous_redir(cmd, type);
-	if (type == HEREDOC)
+    fnode = (t_file *)malloc(sizeof(t_file));
+    if (!fnode)
 	{
-		cmd->heredoc = true;
-		cmd->delimiter = str;
+        perror("malloc");
+        return (cmd->error = 1, (void)0);
 	}
-	else if (type == REDIRIN)
-	{
-		cmd->redirin = true;
-		cmd->infile = str;
-	}
-	else if (type == REDIRAPPEND)
-	{
-		cmd->redirappend = true;
-		cmd->outfile = str;
-	}
-	else if (type == REDIROUT)
-	{
-		cmd->redirout = true;
-		cmd->outfile = str;
-	}
+    fnode->type = type;
+    fnode->name = str;
+    lnode = ft_lstnew(fnode);
+    if (!lnode)
+        return (cmd->error = 1, (void)0);
+    ft_lstadd_back(&cmd->lstfiles, lnode);
 }
 
 static int	get_redir_name(t_cmd *cmd, char *str, int type)
@@ -80,21 +49,15 @@ static int	get_redir_name(t_cmd *cmd, char *str, int type)
 	name = (char *)malloc(sizeof(char) * (size + 1));
 	if (!name)
 	{
-		printf("Error: malloc failed on line %d in file %s\n", __LINE__, __FILE__);
-		exit(1);
+        perror("malloc");
+        return (cmd->error = 1, size + whitespace);
 	}
 	ft_memcpy(name, str, size);
 	*(name + size) = 0;
-	get_redir_type(cmd, type, name);
+	get_redir_node(cmd, type, name);
 	return (size + whitespace);
 }
 
-/* TODO 
- * only last redir <<eof <infile cat produces heredoc script but only read from infile
- * ex <infile <<eof cat only read from heredoc
- * cmd1 >>output >outfile writes to outfile
- * cmd1 >outfile >>output writes to ouput
- */
 void	get_redirs(t_cmd *cmd, char *str)
 {
 	while (*str)
@@ -102,16 +65,16 @@ void	get_redirs(t_cmd *cmd, char *str)
 		if (*str == '<')
 		{
 			if (*(str + 1) && *(str + 1) == '<')
-				str += get_redir_name(cmd, str, HEREDOC) + 2;
+				str += get_redir_name(cmd, str, HEREDOC);
 			else
-				str += get_redir_name(cmd, str, REDIRIN) + 1;
+				str += get_redir_name(cmd, str, REDIRIN);
 		}
 		else if (*str == '>')
 		{
 			if (*(str + 1) && *(str + 1) == '>')
-				str += get_redir_name(cmd, str, REDIRAPPEND) + 2;
+				str += get_redir_name(cmd, str, REDIRAPPEND);
 			else
-				str += get_redir_name(cmd, str, REDIROUT) + 1;
+				str += get_redir_name(cmd, str, REDIROUT);
 		}
 		else
 			str++;

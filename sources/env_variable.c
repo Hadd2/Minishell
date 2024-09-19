@@ -46,7 +46,7 @@ static char	*expand_alpha(t_shell *shell, char *str, char *dsign)
 		return (0);
 	item = hashtable_search(shell->ht, key);
 	free(key);
-	if (!item && !item->value)
+	if (!item || !item->value)
 		return (erase_alpha(str, dsign));
 	s = (char *)malloc(sizeof(char) * (ft_strlen(str) - i + ft_strlen(item->value) + 1));
 	if (!s)
@@ -56,7 +56,7 @@ static char	*expand_alpha(t_shell *shell, char *str, char *dsign)
 	ft_strlcat(s, item->value, ft_strlen(s) + ft_strlen(item->value) + 1);
 	ft_strlcat(s, dsign + i, ft_strlen(s) + ft_strlen(dsign + i) + 1);
 	return (s);
-}	
+}
 
 static char	*expand_exit_value(t_shell *shell, char *str, char *dsign)
 {
@@ -69,7 +69,7 @@ static char	*expand_exit_value(t_shell *shell, char *str, char *dsign)
 	s = (char *)malloc(sizeof(char) * size);
 	if (!s)
 	{
-		printf("Error: malloc failed at %d, in function %s in file %s\n", __LINE__, __FUNCTION__, __FILE__);
+        perror("malloc");
 		return (0);
 	}
 	*s = 0;

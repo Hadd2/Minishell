@@ -6,7 +6,7 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:42:35 by habernar          #+#    #+#             */
-/*   Updated: 2024/09/15 22:42:36 by habernar         ###   ########.fr       */
+/*   Updated: 2024/09/19 19:26:10 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,13 +32,19 @@
     #define DEBUG_LOG(fmt, ...) // Ne rien faire si DEBUG n'est pas défini
 # endif
 
-typedef enum e_file
+typedef enum e_ftype
 {
 	HEREDOC,
 	REDIRIN,
 	REDIROUT,
 	REDIRAPPEND
-}	t_file;
+}	t_ftype;
+
+typedef struct s_file
+{
+    t_ftype type;
+    char    *name;
+}   t_file;
 
 typedef enum e_nodetype
 {
@@ -66,17 +72,10 @@ typedef struct s_cmd
 {
 	int		pid;
 	int		exitcode;
-	bool	heredoc;
-	bool	redirin;
-	bool	redirout;
-	bool	redirappend;
-	int		fdin;
-	int		fdout;
-	char	*infile;
-	char 	*outfile;
-	char	*delimiter;
+    int     error;
 	char	*path;
 	char	**params;
+    t_list  *lstfiles;
 }	t_cmd;
 
 typedef struct s_astnode
@@ -132,7 +131,7 @@ void		execute_pipe(t_shell *shell, t_astnode *n);
 void		ast_interpret(t_shell *shell, t_astnode *n);
 
 /* command */
-t_cmd		*make_command(t_shell *shell, t_astnode *n, char *str);
+void		make_command(t_shell *shell, t_astnode *n);
 
 /* redir */
 void		get_redirs(t_cmd *cmd, char *str);
@@ -140,7 +139,7 @@ char		*remove_redirs(char *str);
 int			skip_whitespace(char **str);
 
 /* free */
-void		free_tab(char **tab);
+void		free_tabe(char **tab);
 void 		free_cmd(t_cmd *cmd);
 void		free_ast(t_astnode *n);
 void		exit_shell(t_shell *shell);
@@ -157,8 +156,10 @@ void		hashtable_resize(t_hashtable *ht);
 bool		hashtable_insert(t_hashtable *ht, char *k, char *v);
 
 /* file */
-void		get_here_doc(t_shell *shell, t_cmd *cmd);
-void		open_file(t_shell *shell, t_cmd *cmd);
+//void		get_here_doc(t_cmd *cmd);
+//void		open_file(t_shell *shell, t_cmd *cmd);
+void	get_here_doc(t_cmd *cmd, char *delimiter);
+void		open_file(t_cmd *cmd, t_list *listnode);
 void		handle_fd(t_shell *shell, t_astnode *n);
 void		parent_close_pipe(t_astnode *n);
 

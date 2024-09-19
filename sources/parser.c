@@ -6,7 +6,7 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:43:35 by habernar          #+#    #+#             */
-/*   Updated: 2024/09/15 22:43:37 by habernar         ###   ########.fr       */
+/*   Updated: 2024/09/19 18:32:48 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ static t_astnode	*parse_command(t_shell *shell, char **str)
 	cmd = malloc(sizeof(char) * (len + 1));
 	if (!cmd)
 	{
-		printf("Error: malloc failed on line %d in file %s\n", __LINE__, __FILE__);
+		perror("malloc");
 		return (shell->parse_error = 1, (t_astnode *)0);
 	}
 	int i = 0;

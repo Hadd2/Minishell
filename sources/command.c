@@ -6,7 +6,7 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:42:54 by habernar          #+#    #+#             */
-/*   Updated: 2024/09/15 22:42:56 by habernar         ###   ########.fr       */
+/*   Updated: 2024/09/19 19:26:17 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,7 @@ char	*make_path(t_shell  *shell, char *cmdname)
 	int		idx;
 
 	if (access(cmdname, F_OK) == 0)
-		return (cmdname);
+		return (ft_strdup(cmdname));
 	item = hashtable_search(shell->ht, "PATH");
 	if (!item)
 		return (0);
@@ -111,91 +111,52 @@ char	*make_path(t_shell  *shell, char *cmdname)
 	{
 		path = ft_strjoin_slash(paths[idx], cmdname, '/');
 		if (access(path, F_OK) == 0)
-			return (free_tab(paths), path);
+			return (free_tabe(paths), path);
 		free(path);
 		idx++;
 	}
-	return (free_tab(paths), NULL);
+	return (free_tabe(paths), (char *)0);
 }
 
-t_cmd	*init_command(t_shell *shell)
+t_cmd	*init_command(void)
 {
 	t_cmd	*c;
 
 	c = (t_cmd *)malloc(sizeof(t_cmd));
 	if (!c)
 	{
-		printf("Error: malloc failed on line %d in file %s", __LINE__, __FILE__);
-		shell->exit_code = 1;
-		c = 0;
+        perror("malloc");
 		return (0);
 	}
+    c->error = 0;
 	c->path = 0;
 	c->params = 0;
-	c->delimiter = 0;
-	c->infile = 0;
-	c->outfile = 0;
-	c->fdin = -1;
-	c->fdout = -1;
-	c->heredoc = false;
-	c->redirout = false;
-	c->redirin = false;
-	c->redirappend = false;
+    c->lstfiles = 0;
 	return (c);
 }
 
-t_cmd	*make_command(t_shell *shell, t_astnode *n, char *str)
+void	make_command(t_shell *shell, t_astnode *n)
 {
-	t_cmd	*cmd;	
-
-    (void)n;
-	cmd = init_command(shell);
-	if (!cmd)
+	n->cmd = init_command();
+	if (!n->cmd)
+		return (n->cmd->error = 1, (void)0);
+	get_redirs(n->cmd, n->ps);
+	remove_redirs(n->ps);
+	remove_whitespace(&n->ps);
+	if (!*n->ps)
+        return (n->cmd->error = 1, (void)0);
+	n->cmd->params = make_params(n->ps);
+	if (!n->cmd->params || !*n->cmd->params)
 	{
-		shell->exit_code = 1;
-		return (0);
+        printf("Error: failed to generate command parameters\n");
+        return (n->cmd->error = 1, (void)0);
 	}
-	get_redirs(cmd, str);
-	remove_redirs(str);
-	remove_whitespace(&str);
-    /*
-	if (!*str)
+	n->cmd->path = make_path(shell, n->cmd->params[0]);
+	if (!n->cmd->path)
 	{
-        n = 0;
-		free_cmd(cmd);
-		shell->exit_code = 1;
-		exit_shell(shell);
+        printf("bash: %s: command not found\n", n->cmd->params[0]);
+        return (n->cmd->error = 1, (void)0);
 	}
-    */
-	cmd->params = make_params(str);
-    /*
-	if (!cmd->params || !*cmd->params)
-	{ printf("Error: failed to generate command parameters\n");
-		free(str);
-        free(n);
-        n = 0;
-		free_cmd(cmd);
-		shell->exit_code = 1;
-		exit_shell(shell);
-	}
-	int i = 0;
-	while (cmd->params[i])
-		printf("%s\n", cmd->params[i++]);
-    */
-	cmd->path = make_path(shell, cmd->params[0]);
-    /*
-	if (!cmd->path)
-	{
-		printf("Error: failed to generate command path\n");
-		free(str);
-        free(n);
-        n = 0;
-		free_cmd(cmd);
-		shell->exit_code = 1;
-		exit_shell(shell);
-	}
-    */
-	expand_quotes(cmd->params);
-	expand_env_variables(shell ,cmd->params);
-	return (cmd);
+	expand_quotes(n->cmd->params);
+	expand_env_variables(shell ,n->cmd->params);
 }

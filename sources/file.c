@@ -6,31 +6,29 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:42:29 by habernar          #+#    #+#             */
-/*   Updated: 2024/09/15 22:42:31 by habernar         ###   ########.fr       */
+/*   Updated: 2024/09/19 19:25:06 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	get_here_doc(t_shell *shell, t_cmd *cmd)
+void	get_here_doc(t_cmd *cmd, char *delimiter)
 {
 	char	*buffer;
 	int		fd_infile;
 
+    unlink(TMP_FILENAME);
 	fd_infile = open(TMP_FILENAME, O_CREAT | O_TRUNC | O_WRONLY, 0666);
 	if (fd_infile == -1)
-	{
-		printf("Error: failed to open heredoc file on line %d in file %s\n", __LINE__, __FILE__);
-		return (shell->exit_code = 1, (void)0);
-	}
+		return (cmd->error = 1, (void)0);
 	while (1)
 	{
-		printf("> ");
+		write(STDIN_FILENO,"> ", 2);
 		buffer = get_next_line(STDIN_FILENO);
 		if (buffer)
 		{
-			if (!ft_strncmp(cmd->delimiter, buffer, ft_strlen(cmd->delimiter))
-				&& buffer[ft_strlen(cmd->delimiter)] == '\n')
+			if (!ft_strncmp(delimiter, buffer, ft_strlen(delimiter))
+				&& buffer[ft_strlen(delimiter)] == '\n')
 			{
 				free(buffer);
 				break ;
@@ -42,40 +40,52 @@ void	get_here_doc(t_shell *shell, t_cmd *cmd)
 	close(fd_infile);
 }
 
-void	open_file(t_shell *shell, t_cmd *cmd)
+void	open_file(t_cmd *cmd, t_list *lst)
 {
-	/*
-	 * infile
-	 * MUST BE ANOTHER FOR OUTFILE OTHERWISE RETURN ONLY OUTFILE WHEN BOTH IN AND OUTFILE */
-	if (cmd->heredoc || cmd->redirin)
-	{
-		if (cmd->heredoc)
-			cmd->fdin = open(TMP_FILENAME, O_RDONLY);
-		else if (cmd->redirin)
-			cmd->fdin = open(cmd->infile, O_RDONLY);
-		if (cmd->fdin == -1)
+    t_file  *filenode;
+    int fd;
+
+    if (!lst->content)
+        return (cmd->error = 1, (void)0);
+    filenode = (t_file *)lst->content;
+    if (filenode->type == HEREDOC || filenode->type == REDIRIN)
+    {
+		if (filenode->type == HEREDOC)
 		{
-			printf("Error: failed to open file descriptor.\n");
-			return (shell->exit_code = 1, (void)0);
+            get_here_doc(cmd, filenode->name);
+        	fd = open(TMP_FILENAME, O_RDONLY);
 		}
-	}
-	if (cmd->redirout || cmd->redirappend)
-	{
-		if (cmd->redirappend)
-			cmd->fdout = open(cmd->outfile, O_CREAT | O_APPEND | O_WRONLY, 0666);
-		else if (cmd->redirout)
-			cmd->fdout = open(cmd->outfile, O_CREAT | O_TRUNC | O_WRONLY, 0666);
-		if (cmd->fdout == -1)
+		else
+			fd = open(filenode->name, O_RDONLY);
+		if (fd == -1)
 		{
-			printf("Error: failed to open file descriptor.\n");
-			return (shell->exit_code = 1, (void)0);
+		    printf("bash: %s: No such file or directory\n", filenode->name);
+			return (cmd->error = 1, (void)0);
 		}
-	}
+        dup2(fd, STDIN_FILENO);
+        close(fd);
+    }
+    else if (filenode->type == REDIROUT || filenode->type == REDIRAPPEND)
+    {
+        if (filenode->type == REDIRAPPEND)
+		    fd = open(filenode->name, O_CREAT | O_APPEND | O_WRONLY, 0666);
+        else
+		    fd = open(filenode->name, O_CREAT | O_TRUNC | O_WRONLY, 0666);
+		if (fd == -1)
+		{
+		    printf("bash: %s: No such file or directory\n", filenode->name);
+			return (cmd->error = 1, (void)0);
+		}
+        dup2(fd, STDOUT_FILENO);
+        close(fd);
+    }
 }
 
 void	handle_fd(t_shell *shell, t_astnode *n)
 {
-	open_file(shell, n->cmd);
+    t_list  *tmp;
+
+    (void)shell;
 	if (n->pipein != -1)
 	{
 		dup2(n->pipein, STDIN_FILENO);
@@ -88,26 +98,12 @@ void	handle_fd(t_shell *shell, t_astnode *n)
 		close(n->pipeout);
 		n->pipeout = -1;
 	}
-	if (n->cmd->redirin || n->cmd->heredoc)
-	{
-		if (n->cmd->heredoc)
-			get_here_doc(shell, n->cmd);
-		if (n->cmd->fdin != -1)
-		{
-			dup2(n->cmd->fdin, STDIN_FILENO);
-			close(n->cmd->fdin);
-			n->cmd->fdin = -1;
-		}
-	}
-	if (n->cmd->redirout || n->cmd->redirappend)
-	{
-		if (n->cmd->fdout != -1)
-		{
-			dup2(n->cmd->fdout, STDOUT_FILENO);
-			close(n->cmd->fdout);
-			n->cmd->fdout = -1;
-		}
-	}
+    tmp = n->cmd->lstfiles;
+    while (tmp)
+    {
+        open_file(n->cmd, tmp);
+        tmp = tmp->next;
+    }
 }
 
 void	parent_close_pipe(t_astnode *n)

@@ -6,7 +6,7 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:42:48 by habernar          #+#    #+#             */
-/*   Updated: 2024/09/15 22:42:49 by habernar         ###   ########.fr       */
+/*   Updated: 2024/09/19 19:32:20 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,45 +28,52 @@ void	wait_command(t_shell *shell, t_cmd *cmd)
 /* debug */
 void 	print_cmd(t_cmd *cmd)
 {
+    t_list  *tmp;
+    t_file  *fnode;
+
 	if (cmd->params)
 	{
 		int i = 0;
 		while (cmd->params[i])
-			printf("param:%s\n", cmd->params[i++]);
+        {
+			printf("param: %d, %s\n",i, cmd->params[i]);
+            i++;
+        }
 	}
-	if (cmd->heredoc && cmd->delimiter)
-		printf("%s\n", cmd->delimiter);
-	if (cmd->infile)
-		printf("%s\n", cmd->infile);
-	if (cmd->outfile)
-		printf("%s\n", cmd->outfile);
 	if (cmd->path)
 		printf("path:%s\n", cmd->path);
+    tmp = cmd->lstfiles;
+    while (tmp)
+    {
+        if (!tmp->content)
+            return ;
+        fnode = (t_file *)tmp->content;
+		printf("type:%d\tname:%s\n", fnode->type, fnode->name);
+        tmp = tmp->next;
+    }
 }
 
 void	execute_cmd(t_shell *shell, t_astnode *n)
 {
-	n->cmd = make_command(shell, n, n->ps);
-	if (!n->cmd)
+	make_command(shell, n);
+	//print_cmd(n->cmd);
+	if (n->cmd->error)
 		return ;
-#ifdef DEBUG
-	print_cmd(n->cmd);
-#endif
-	/*
-	if (BUILTIN)
-	 */
-	print_cmd(n->cmd);
+    /*
+    if (is_builtin(...))
+        return (exec_builtin(...))
+    */
 	n->cmd->pid = fork();
 	if (n->cmd->pid == -1)
 	{
-		printf("Error: failed to create a pipe on line %d in file %s\n", __LINE__, __FILE__);
+        perror("fork");
 		return (shell->exit_code = 1, (void)0);
 	}
 	if (n->cmd->pid == 0)
 	{
 		handle_fd(shell, n);
 		shell->exit_code = execve(n->cmd->path, n->cmd->params, shell->env);
-		printf("Error: failed to execve on line %d in file %s\n", __LINE__, __FILE__);
+        perror("execve");
 		exit_shell(shell);
 	}
 	else
@@ -82,7 +89,7 @@ void	execute_pipe(t_shell *shell, t_astnode *n)
 
 	if (pipe(pipefd) == -1)
 	{
-		printf("Failed to create pipe on line %d in file %s", __LINE__, __FILE__);
+        perror("pipe");
 		return (shell->exit_code = 1, (void)0);
 	}
 	find_all_leaf_left(n, pipefd[1]);

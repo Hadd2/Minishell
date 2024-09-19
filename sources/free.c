@@ -6,49 +6,48 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:43:14 by habernar          #+#    #+#             */
-/*   Updated: 2024/09/15 22:43:15 by habernar         ###   ########.fr       */
+/*   Updated: 2024/09/19 18:28:22 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	free_tab(char **tab)
+void	free_tabe(char **tab)
 {
 	int	idx;
 
 	idx = 0;
-	if (tab)
+	while (tab[idx])
 	{
-		while (tab[idx])
-		{
-			free(tab[idx]);
-			idx++;
-		}
-		free(tab);
+		free(tab[idx]);
+		idx++;
 	}
-	tab = 0;
+	free(tab);
+}
+
+void del_filenode(void *content)
+{
+    t_file *fnode;
+
+    fnode = (t_file *)content;
+    if (!fnode)
+        return;
+    if (fnode->name)
+        free(fnode->name);
+    free(fnode);
 }
 
 void 	free_cmd(t_cmd *cmd)
 {
 	if (!cmd)
 		return ;
-	if (cmd->heredoc)
-	{
-		unlink(TMP_FILENAME);
-		if (cmd->delimiter)
-			free(cmd->delimiter);
-	}
-	if (cmd->infile)
-		free(cmd->infile);
-	if (cmd->outfile)
-		free(cmd->outfile);
-	if (cmd->path)
-		free(cmd->path);
 	if (cmd->params)
-		free_tab(cmd->params);
-	free(cmd);
-	cmd = 0;
+		free_tabe(cmd->params);
+    if (cmd->lstfiles)
+        ft_lstclear(&cmd->lstfiles, del_filenode);
+    if (cmd->path)
+		free(cmd->path);
+    free(cmd);
 }
 
 void	free_ast(t_astnode *n)

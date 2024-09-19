@@ -6,7 +6,7 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:43:29 by habernar          #+#    #+#             */
-/*   Updated: 2024/09/15 22:43:30 by habernar         ###   ########.fr       */
+/*   Updated: 2024/09/19 19:32:04 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,14 +31,6 @@ static void	init_shell(t_shell *shell, char **env)
         k = ft_strndup(env[i], ft_strchr(env[i], '=') - env[i]);
         v = ft_strdup(ft_strchr(env[i], '=') + 1);
         hashtable_insert(shell->ht, k, v);
-/*
-#ifdef DEBUG
-		DEBUG_LOG("Inserted env var: %s=%s", k, v);
-#endif
-*/
-#ifdef DEBUG
-		DEBUG_LOG("Inserted env var: %s=%s", k, v);
-#endif
         i++;
     }
 }
@@ -49,7 +41,7 @@ static int	parsable(char *str)
 	int		i;
 	char	c;
 
-	if (!str || (*str && *str == '\n' && !*(str + 1)))
+	if (!str || (str && nothing_to_parse(str, *str)))
 		return (0);
 	i = 0;
 	while (i < 127)
@@ -68,10 +60,6 @@ static int	parsable(char *str)
 		else 
 			str++;
 	}
-
-#ifdef DEBUG
-	DEBUG_LOG("Parsing input: ASCII counts: \" %d, ' %d, ( %d, ) %d", ascii['\"'], ascii['\''], ascii['('], ascii[')']);
-#endif
 	return (!ascii['\\'] && !ascii[';'] && ascii['\''] % 2 == 0 && ascii['\"'] % 2 == 0 && ascii['('] == ascii[')']);
 }
 
@@ -98,12 +86,8 @@ int main(int argc, char **argv, char **env)
 			shell.cl = get_next_line(STDIN_FILENO);
 			continue;
 		}
-
-#ifdef DEBUG	
-        print_ast(shell.ast);
-#endif
 		shell.ast = parse_logical(&shell, &shell.cl);
-        print_ast(shell.ast);
+        //print_ast(shell.ast);
 		if (shell.parse_error == 0)
 			ast_interpret(&shell, shell.ast);
 		free(shell.headcl);
@@ -113,63 +97,6 @@ int main(int argc, char **argv, char **env)
 		shell.cl = get_next_line(STDIN_FILENO);
 	}
 	hashtable_free(shell.ht);
-	//exit_shell(&shell);
+	//return (shell.exit_code);
 	return (0);
 }
-/*
-int main(int argc, char **argv, char **env)
-{
-    t_shell shell;
-    char prompt[256];
-    
-    (void)argc;
-    (void)argv;
-    init_shell(&shell, env);
-
-    while (1)
-    {
-        // Afficher le prompt
-        if (getcwd(prompt, sizeof(prompt)) != NULL)
-            printf("%s$ ", prompt);
-        else
-            printf("$ ");  // Fallback si getcwd échoue
-        
-        // Lire l'entrée utilisateur
-        shell.cl = readline(0);
-        if (shell.cl == NULL) // Gestion de EOF (Ctrl+D)
-            break;
-
-        // Traiter la commande si elle n'est pas vide
-        if (*shell.cl != '\0')
-        {
-            shell.parse_error = 0;
-            shell.headcl = shell.cl;
-
-            if (parsable(shell.cl))
-            {
-                shell.ast = parse_logical(&shell, &shell.cl);
-#ifdef DEBUG    
-                print_ast(shell.ast);
-#endif
-                if (shell.parse_error == 0)
-                    ast_interpret(&shell, shell.ast);
-                
-                free_ast(shell.ast);
-                shell.ast = NULL;
-            }
-        }
-        shell.headcl = NULL;
-    }
-	hashtable_free(shell.ht);
-    //exit_shell(&shell);
-	exit(shell.exit_code);
-}
-*/
-/* TODO SHELL STRUCTURE
- * SIGNAL
- * ENV + ENVVARIABLE
- * HANDLE "" AND '' AND $
- * FINISH EXEC
- * BUILTIN
- * HISTORY
- */
