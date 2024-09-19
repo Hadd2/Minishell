@@ -6,13 +6,13 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:43:14 by habernar          #+#    #+#             */
-/*   Updated: 2024/09/19 18:28:22 by habernar         ###   ########.fr       */
+/*   Updated: 2024/09/19 21:09:14 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	free_tabe(char **tab)
+void	free_tab(char **tab)
 {
 	int	idx;
 
@@ -30,9 +30,11 @@ void del_filenode(void *content)
     t_file *fnode;
 
     fnode = (t_file *)content;
-    if (!fnode)
-        return;
-    if (fnode->name)
+	if (!fnode)
+		return;
+	if (fnode->type == HEREDOC)
+		unlink(TMP_FILENAME);
+	if (fnode->name)
         free(fnode->name);
     free(fnode);
 }
@@ -42,7 +44,7 @@ void 	free_cmd(t_cmd *cmd)
 	if (!cmd)
 		return ;
 	if (cmd->params)
-		free_tabe(cmd->params);
+		free_tab(cmd->params);
     if (cmd->lstfiles)
         ft_lstclear(&cmd->lstfiles, del_filenode);
     if (cmd->path)

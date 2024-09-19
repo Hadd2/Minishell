@@ -6,7 +6,7 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:43:35 by habernar          #+#    #+#             */
-/*   Updated: 2024/09/19 18:32:48 by habernar         ###   ########.fr       */
+/*   Updated: 2024/09/19 21:15:04 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,8 @@ static t_astnode	*parse_pipe(t_shell *shell, char **str)
 	if (left && (*(*str) == '|' && *(*str + 1) != '|'))
 	{
 		(*str)++;
-		if (nothing_to_parse(*str, '|'))
+		//if (nothing_to_parse(*str, '|'))
+		if (nothing_to_parse(*str))
 			return (shell->parse_error = 1, left);
 		right = parse_pipe(shell, str);
 		left = ast_make_node(shell, PIPE, left, right);
@@ -99,7 +100,8 @@ t_astnode	*parse_logical(t_shell *shell, char **str)
 		else
 			type = LOGICAL_OR;
 		(*str) += 2;
-		if (nothing_to_parse(*str, *(*str - 2)))
+		//if (nothing_to_parse(*str, *(*str - 2)))
+		if (nothing_to_parse(*str))
 			return (shell->parse_error = 1, left);
 		right = parse_logical(shell, str);
 		left = ast_make_node(shell, type, left, right);

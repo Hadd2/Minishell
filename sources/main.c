@@ -6,7 +6,7 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:43:29 by habernar          #+#    #+#             */
-/*   Updated: 2024/09/19 19:32:04 by habernar         ###   ########.fr       */
+/*   Updated: 2024/09/19 21:18:13 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,8 @@ static int	parsable(char *str)
 	int		i;
 	char	c;
 
-	if (!str || (str && nothing_to_parse(str, *str)))
+	//if (!str || (str && nothing_to_parse(str, *str)))
+	if (!str || (str && nothing_to_parse(str)))
 		return (0);
 	i = 0;
 	while (i < 127)
@@ -69,14 +70,9 @@ int main(int argc, char **argv, char **env)
 
 	(void)argc, (void)argv;
 	init_shell(&shell, env);
-	//shell.cl = readline("$");
-	//char str[200];
-	//size_t size = 200;
 	shell.cl = get_next_line(STDIN_FILENO);
 	while (shell.cl)
 	{
-		//printf("%s> ", getcwd(str,	size));
-		//shell.cl = get_next_line(STDIN_FILENO);
 		shell.parse_error = 0;
 		shell.headcl = shell.cl;
 		if (!parsable(shell.cl))
@@ -100,3 +96,11 @@ int main(int argc, char **argv, char **env)
 	//return (shell.exit_code);
 	return (0);
 }
+
+/*
+//printf("%s> ", getcwd(str,	size));
+//shell.cl = get_next_line(STDIN_FILENO);
+//shell.cl = readline("$")
+//char str[200];
+//size_t size = 200;
+*/

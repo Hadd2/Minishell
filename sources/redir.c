@@ -6,7 +6,7 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:43:39 by habernar          #+#    #+#             */
-/*   Updated: 2024/09/19 19:32:09 by habernar         ###   ########.fr       */
+/*   Updated: 2024/09/19 20:56:26 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,10 @@ static void	get_redir_node(t_cmd *cmd, int type, char *str)
         perror("malloc");
         return (cmd->error = 1, (void)0);
 	}
-    fnode->type = type;
+	if (type == HEREDOC)
+		get_here_doc(cmd, str);
     fnode->name = str;
+    fnode->type = type;
     lnode = ft_lstnew(fnode);
     if (!lnode)
         return (cmd->error = 1, (void)0);

@@ -6,7 +6,7 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:42:35 by habernar          #+#    #+#             */
-/*   Updated: 2024/09/19 19:26:10 by habernar         ###   ########.fr       */
+/*   Updated: 2024/09/19 21:15:19 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,7 +110,7 @@ void		find_all_leaf_left(t_astnode *n, int fd);
 t_astnode	*parse_logical(t_shell *shell, char **str);
 
 /* parse utils */
-bool		nothing_to_parse(char *str, char c);
+bool		nothing_to_parse(char *str);
 int			is_whitespace(char c);
 int			is_delimiter(char c);
 int			skip_whitespace(char **str);
@@ -139,7 +139,7 @@ char		*remove_redirs(char *str);
 int			skip_whitespace(char **str);
 
 /* free */
-void		free_tabe(char **tab);
+void		free_tab(char **tab);
 void 		free_cmd(t_cmd *cmd);
 void		free_ast(t_astnode *n);
 void		exit_shell(t_shell *shell);
@@ -156,11 +156,9 @@ void		hashtable_resize(t_hashtable *ht);
 bool		hashtable_insert(t_hashtable *ht, char *k, char *v);
 
 /* file */
-//void		get_here_doc(t_cmd *cmd);
-//void		open_file(t_shell *shell, t_cmd *cmd);
-void	get_here_doc(t_cmd *cmd, char *delimiter);
+void		get_here_doc(t_cmd *cmd, char *delimiter);
 void		open_file(t_cmd *cmd, t_list *listnode);
-void		handle_fd(t_shell *shell, t_astnode *n);
+void		handle_fd(t_astnode *n);
 void		parent_close_pipe(t_astnode *n);
 
 /* debug */

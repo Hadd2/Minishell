@@ -6,26 +6,23 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:43:42 by habernar          #+#    #+#             */
-/*   Updated: 2024/09/19 18:30:38 by habernar         ###   ########.fr       */
+/*   Updated: 2024/09/19 21:14:30 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-bool	nothing_to_parse(char *str, char c)
+bool	nothing_to_parse(char *str)
 {
-    (void)c;
     char *head;
+
 	if (!str || !*str)
 		return (true);
     head = str;
 	while (*str && is_whitespace(*str))
 		str++;
 	if (!*str || (*str && is_delimiter(*str) && (*head != '(')))
-    {
-        printf("Error: nothing to parse\n");
         return (true);
-    }
 	return (false);
 }
 

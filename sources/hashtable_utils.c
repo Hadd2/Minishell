@@ -6,7 +6,7 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:43:17 by habernar          #+#    #+#             */
-/*   Updated: 2024/09/15 22:43:18 by habernar         ###   ########.fr       */
+/*   Updated: 2024/09/19 19:48:33 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,6 @@ t_item	*item_create(char *k, char *v)
     item = (t_item *)malloc(sizeof(t_item));
     if (!item)
     {
-        //printf("Error: malloc failed at line %d, in function %s in file %s\n", __LINE__, __FUNCTION__, __FILE__);
         perror("malloc");
         return (0);
     }
@@ -44,7 +43,6 @@ t_hashtable	*hashtable_init(void)
     ht = (t_hashtable *)malloc(sizeof(t_hashtable));
     if (!ht)
     {
-        //printf("Error: malloc failed at line %d, in function %s in file %s\n", __LINE__, __FUNCTION__, __FILE__);
         perror("malloc");
         return (0);
     }
@@ -53,7 +51,6 @@ t_hashtable	*hashtable_init(void)
     ht->items = (t_item **)malloc(sizeof(t_item *) * ht->size);
     if (!ht->items)
     {
-        //printf("Error: malloc failed at line %d, in function %s in file %s\n", __LINE__, __FUNCTION__, __FILE__);
         perror("malloc");
         free(ht);
         return (0);

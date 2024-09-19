@@ -6,7 +6,7 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:42:29 by habernar          #+#    #+#             */
-/*   Updated: 2024/09/19 19:25:06 by habernar         ###   ########.fr       */
+/*   Updated: 2024/09/19 21:08:17 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,11 @@
 void	get_here_doc(t_cmd *cmd, char *delimiter)
 {
 	char	*buffer;
-	int		fd_infile;
+	int		fd;
 
     unlink(TMP_FILENAME);
-	fd_infile = open(TMP_FILENAME, O_CREAT | O_TRUNC | O_WRONLY, 0666);
-	if (fd_infile == -1)
+	fd = open(TMP_FILENAME, O_CREAT | O_TRUNC | O_WRONLY, 0666);
+	if (fd == -1)
 		return (cmd->error = 1, (void)0);
 	while (1)
 	{
@@ -33,59 +33,64 @@ void	get_here_doc(t_cmd *cmd, char *delimiter)
 				free(buffer);
 				break ;
 			}
-			write(fd_infile, buffer, ft_strlen(buffer));
+			write(fd, buffer, ft_strlen(buffer));
 			free(buffer);
 		}
 	}
-	close(fd_infile);
+	close(fd);
+}
+
+void	open_infile(t_cmd *cmd, t_file *filenode)
+{
+	int	fd;
+
+	if (filenode->type == HEREDOC)
+		fd = open(TMP_FILENAME, O_RDONLY);
+	else
+		fd = open(filenode->name, O_RDONLY);
+	if (fd == -1)
+	{
+		printf("bash: %s: No such file or directory\n", filenode->name);
+		return (cmd->error = 1, (void)0);
+	}
+	dup2(fd, STDIN_FILENO);
+	close(fd);
+}
+
+void	open_outfile(t_cmd *cmd, t_file *filenode)
+{
+	int	fd;
+
+	if (filenode->type == REDIRAPPEND)
+		fd = open(filenode->name, O_CREAT | O_APPEND | O_WRONLY, 0666);
+	else
+		fd = open(filenode->name, O_CREAT | O_TRUNC | O_WRONLY, 0666);
+	if (fd == -1)
+	{
+		printf("bash: %s: No such file or directory\n", filenode->name);
+		return (cmd->error = 1, (void)0);
+	}
+	dup2(fd, STDOUT_FILENO);
+	close(fd);
 }
 
 void	open_file(t_cmd *cmd, t_list *lst)
 {
     t_file  *filenode;
-    int fd;
 
     if (!lst->content)
         return (cmd->error = 1, (void)0);
     filenode = (t_file *)lst->content;
     if (filenode->type == HEREDOC || filenode->type == REDIRIN)
-    {
-		if (filenode->type == HEREDOC)
-		{
-            get_here_doc(cmd, filenode->name);
-        	fd = open(TMP_FILENAME, O_RDONLY);
-		}
-		else
-			fd = open(filenode->name, O_RDONLY);
-		if (fd == -1)
-		{
-		    printf("bash: %s: No such file or directory\n", filenode->name);
-			return (cmd->error = 1, (void)0);
-		}
-        dup2(fd, STDIN_FILENO);
-        close(fd);
-    }
+		open_infile(cmd, filenode);
     else if (filenode->type == REDIROUT || filenode->type == REDIRAPPEND)
-    {
-        if (filenode->type == REDIRAPPEND)
-		    fd = open(filenode->name, O_CREAT | O_APPEND | O_WRONLY, 0666);
-        else
-		    fd = open(filenode->name, O_CREAT | O_TRUNC | O_WRONLY, 0666);
-		if (fd == -1)
-		{
-		    printf("bash: %s: No such file or directory\n", filenode->name);
-			return (cmd->error = 1, (void)0);
-		}
-        dup2(fd, STDOUT_FILENO);
-        close(fd);
-    }
+		open_outfile(cmd, filenode);
 }
 
-void	handle_fd(t_shell *shell, t_astnode *n)
+void	handle_fd(t_astnode *n)
 {
     t_list  *tmp;
 
-    (void)shell;
 	if (n->pipein != -1)
 	{
 		dup2(n->pipein, STDIN_FILENO);

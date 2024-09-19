@@ -6,7 +6,7 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:43:21 by habernar          #+#    #+#             */
-/*   Updated: 2024/09/15 22:43:22 by habernar         ###   ########.fr       */
+/*   Updated: 2024/09/19 19:48:49 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ void	hashtable_resize(t_hashtable *ht)
     new_table = (t_item **)malloc(sizeof(t_item *) * ht->size * 2);
     if (!new_table)
     {
-        printf("Error: malloc failed at line %d, in function %s in file %s\n", __LINE__, __FUNCTION__, __FILE__);
+		perror("malloc");
         return;
     }
 	i = 0;

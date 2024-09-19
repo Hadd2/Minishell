@@ -6,7 +6,7 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:42:54 by habernar          #+#    #+#             */
-/*   Updated: 2024/09/19 19:26:17 by habernar         ###   ########.fr       */
+/*   Updated: 2024/09/19 21:15:36 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,11 +111,11 @@ char	*make_path(t_shell  *shell, char *cmdname)
 	{
 		path = ft_strjoin_slash(paths[idx], cmdname, '/');
 		if (access(path, F_OK) == 0)
-			return (free_tabe(paths), path);
+			return (free_tab(paths), path);
 		free(path);
 		idx++;
 	}
-	return (free_tabe(paths), (char *)0);
+	return (free_tab(paths), (char *)0);
 }
 
 t_cmd	*init_command(void)
@@ -143,7 +143,8 @@ void	make_command(t_shell *shell, t_astnode *n)
 	get_redirs(n->cmd, n->ps);
 	remove_redirs(n->ps);
 	remove_whitespace(&n->ps);
-	if (!*n->ps)
+	printf("%s$\n",n->ps);
+	if (!*n->ps || nothing_to_parse(n->ps))
         return (n->cmd->error = 1, (void)0);
 	n->cmd->params = make_params(n->ps);
 	if (!n->cmd->params || !*n->cmd->params)

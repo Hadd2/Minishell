@@ -6,7 +6,7 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:42:48 by habernar          #+#    #+#             */
-/*   Updated: 2024/09/19 19:32:20 by habernar         ###   ########.fr       */
+/*   Updated: 2024/09/19 20:33:17 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ void	execute_cmd(t_shell *shell, t_astnode *n)
 	}
 	if (n->cmd->pid == 0)
 	{
-		handle_fd(shell, n);
+		handle_fd(n);
 		shell->exit_code = execve(n->cmd->path, n->cmd->params, shell->env);
         perror("execve");
 		exit_shell(shell);
