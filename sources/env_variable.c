@@ -6,7 +6,7 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:45:47 by habernar          #+#    #+#             */
-/*   Updated: 2024/09/15 22:55:57 by habernar         ###   ########.fr       */
+/*   Updated: 2024/09/23 19:18:38 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,8 @@ static char	*erase_alpha(char *str, char *dsign)
 	int		size;
 
 	i = 1;
-	while (*(dsign + i) && ft_isalpha(*(dsign + i)))
-			i++;
+	while (*(dsign + i) && ft_isalnum(*(dsign + i)))
+		i++;
 	size = ft_strlen(str) - i + 1;
 	s = (char *)malloc(sizeof(char) * size);
 	if (!s)
@@ -39,7 +39,7 @@ static char	*expand_alpha(t_shell *shell, char *str, char *dsign)
 	t_item	*item;
 
 	i = 1;
-	while (*(dsign + i) && ft_isalpha(*(dsign + i)))
+	while (*(dsign + i) && ft_isalnum(*(dsign + i)))
 		i++;
 	key = ft_strndup(dsign + 1, i - 1);
 	if (!key)
@@ -48,7 +48,8 @@ static char	*expand_alpha(t_shell *shell, char *str, char *dsign)
 	free(key);
 	if (!item || !item->value)
 		return (erase_alpha(str, dsign));
-	s = (char *)malloc(sizeof(char) * (ft_strlen(str) - i + ft_strlen(item->value) + 1));
+	i = ft_strlen(str) - i + ft_strlen(item->value) + 1;
+	s = (char *)malloc(sizeof(char) * i);
 	if (!s)
 		return (0);
 	*s = 0;
@@ -69,7 +70,7 @@ static char	*expand_exit_value(t_shell *shell, char *str, char *dsign)
 	s = (char *)malloc(sizeof(char) * size);
 	if (!s)
 	{
-        perror("malloc");
+		perror("malloc");
 		return (0);
 	}
 	*s = 0;
@@ -84,7 +85,7 @@ static char	*expanded_string(t_shell *shell, char *str, char *dsign)
 {
 	if (*(dsign + 1) && *(dsign + 1) == '?')
 		return (expand_exit_value(shell, str, dsign));
-	else if (*(dsign + 1)  && ft_isalpha(*(dsign + 1)))
+	else if (*(dsign + 1) && ft_isalpha(*(dsign + 1)))
 		return (expand_alpha(shell, str, dsign));
 	else
 		return (0);
@@ -109,7 +110,7 @@ void	expand_env_variables(t_shell *shell, char **tab)
 				{
 					free(tab[i]);
 					tab[i] = new;
-					continue;
+					continue ;
 				}
 			}
 		}

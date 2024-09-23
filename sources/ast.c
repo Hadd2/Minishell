@@ -6,25 +6,25 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:43:05 by habernar          #+#    #+#             */
-/*   Updated: 2024/09/15 22:43:06 by habernar         ###   ########.fr       */
+/*   Updated: 2024/09/23 19:20:00 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-t_astnode	*ast_make_node(t_shell *shell, int type, t_astnode *left, t_astnode *right)
+t_astnode	*ast_make_node(t_shell *shell, int type, t_astnode *l, t_astnode *r)
 {
 	t_astnode	*n;
 
 	n = (t_astnode *)malloc(sizeof(t_astnode));
 	if (!n)
 	{
-        perror("malloc");
-        return (shell->parse_error = 1, (t_astnode *)0);
+		perror("malloc");
+		return (shell->parse_error = 1, (t_astnode *)0);
 	}
 	n->type = type;
-	n->left = left;
-	n->right = right;
+	n->left = l;
+	n->right = r;
 	n->ps = 0;
 	n->cmd = 0;
 	n->pipein = -1;
@@ -39,8 +39,8 @@ t_astnode	*ast_make_cmd(t_shell *shell, char *s)
 	n = (t_astnode *)malloc(sizeof(t_astnode));
 	if (!n)
 	{
-        perror("malloc");
-        return (shell->parse_error = 1, (t_astnode *)0);
+		perror("malloc");
+		return (shell->parse_error = 1, (t_astnode *)0);
 	}
 	n->type = CMD;
 	n->left = 0;
@@ -79,13 +79,13 @@ void	print_ast(t_astnode *n)
 {
 	if (!n)
 		return ;
-	if (n->type == LOGICAL_AND) 
+	if (n->type == LOGICAL_AND)
 		printf("ast_node logical AND\n");
-	if (n->type == LOGICAL_OR) 
+	if (n->type == LOGICAL_OR)
 		printf("ast_node logical OR\n");
-	if (n->type == PIPE) 
+	if (n->type == PIPE)
 		printf("ast_node PIPE\n");
-	if (n->type == CMD) 
+	if (n->type == CMD)
 		printf("ast_node CMD: %s\n", n->ps);
 	if (n->left)
 	{

@@ -6,7 +6,7 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:43:42 by habernar          #+#    #+#             */
-/*   Updated: 2024/09/19 21:14:30 by habernar         ###   ########.fr       */
+/*   Updated: 2024/09/23 19:00:15 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,21 +14,22 @@
 
 bool	nothing_to_parse(char *str)
 {
-    char *head;
+	char	*head;
 
 	if (!str || !*str)
 		return (true);
-    head = str;
+	head = str;
 	while (*str && is_whitespace(*str))
 		str++;
 	if (!*str || (*str && is_delimiter(*str) && (*head != '(')))
-        return (true);
+		return (true);
 	return (false);
 }
 
 int	is_whitespace(char c)
 {
-	if (c == ' ' || c == '\n' || c == '\t' || c == '\v' || c == '\r' || c == '\f')
+	if (c == ' ' || c == '\n' || c == '\t'
+		|| c == '\v' || c == '\r' || c == '\f')
 		return (1);
 	return (0);
 }
@@ -46,7 +47,7 @@ int	skip_whitespace(char **str)
 
 	s = *str;
 	while (*(*str) && (*(*str) == ' ' || *(*str) == '\t'
-		|| *(*str) == '\r' || *(*str) == '\n' || *(*str) == '\f'))
+			|| *(*str) == '\r' || *(*str) == '\n' || *(*str) == '\f'))
 	{
 		(*str)++;
 	}

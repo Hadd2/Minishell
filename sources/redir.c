@@ -6,13 +6,13 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:43:39 by habernar          #+#    #+#             */
-/*   Updated: 2024/09/19 20:56:26 by habernar         ###   ########.fr       */
+/*   Updated: 2024/09/23 19:44:51 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static void	get_redir_node(t_cmd *cmd, int type, char *str)
+static void	get_redir_node(t_shell *shell, t_cmd *cmd, int type, char *str)
 {
     t_list  *lnode;
     t_file  *fnode;
@@ -24,7 +24,11 @@ static void	get_redir_node(t_cmd *cmd, int type, char *str)
         return (cmd->error = 1, (void)0);
 	}
 	if (type == HEREDOC)
-		get_here_doc(cmd, str);
+	{
+		unlink(TMP_FILENAME);
+		if (get_here_doc(shell, cmd, str))
+			printf(HEREDOC_EOF, str);
+	}
     fnode->name = str;
     fnode->type = type;
     lnode = ft_lstnew(fnode);
@@ -33,7 +37,7 @@ static void	get_redir_node(t_cmd *cmd, int type, char *str)
     ft_lstadd_back(&cmd->lstfiles, lnode);
 }
 
-static int	get_redir_name(t_cmd *cmd, char *str, int type)
+static int	get_redir_name(t_shell *shell, t_cmd *cmd, char *str, int type)
 {
 	int		size;
 	int		whitespace;
@@ -56,27 +60,27 @@ static int	get_redir_name(t_cmd *cmd, char *str, int type)
 	}
 	ft_memcpy(name, str, size);
 	*(name + size) = 0;
-	get_redir_node(cmd, type, name);
+	get_redir_node(shell, cmd, type, name);
 	return (size + whitespace);
 }
 
-void	get_redirs(t_cmd *cmd, char *str)
+void	get_redirs(t_shell *shell, t_cmd *cmd, char *str)
 {
 	while (*str)
 	{
 		if (*str == '<')
 		{
 			if (*(str + 1) && *(str + 1) == '<')
-				str += get_redir_name(cmd, str, HEREDOC);
+				str += get_redir_name(shell, cmd, str, HEREDOC);
 			else
-				str += get_redir_name(cmd, str, REDIRIN);
+				str += get_redir_name(shell, cmd, str, REDIRIN);
 		}
 		else if (*str == '>')
 		{
 			if (*(str + 1) && *(str + 1) == '>')
-				str += get_redir_name(cmd, str, REDIRAPPEND);
+				str += get_redir_name(shell, cmd, str, REDIRAPPEND);
 			else
-				str += get_redir_name(cmd, str, REDIROUT);
+				str += get_redir_name(shell, cmd, str, REDIROUT);
 		}
 		else
 			str++;
@@ -106,8 +110,5 @@ char	*remove_redirs(char *str)
 		else
 			i++;
 	}
-#ifdef DEBUG
-	printf("rmredir: %s\n", str);
-#endif
 	return (str);
 }

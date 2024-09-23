@@ -6,7 +6,7 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:46:04 by habernar          #+#    #+#             */
-/*   Updated: 2024/09/15 22:46:04 by habernar         ###   ########.fr       */
+/*   Updated: 2024/09/23 18:58:47 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,8 +63,8 @@ int	only_capital_letter(char *str)
 
 void	remove_whitespace(char **str)
 {
-	char c;
-	char *h;
+	char	c;
+	char	*h;
 
 	h = *str;
 	while (*(*str))

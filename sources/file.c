@@ -6,41 +6,40 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:42:29 by habernar          #+#    #+#             */
-/*   Updated: 2024/09/19 21:08:17 by habernar         ###   ########.fr       */
+/*   Updated: 2024/09/23 19:42:53 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	get_here_doc(t_cmd *cmd, char *delimiter)
+int	get_here_doc(t_shell *shell, t_cmd *cmd, char *delimiter)
 {
 	char	*buffer;
 	int		fd;
 
-    unlink(TMP_FILENAME);
 	fd = open(TMP_FILENAME, O_CREAT | O_TRUNC | O_WRONLY, 0666);
 	if (fd == -1)
-		return (cmd->error = 1, (void)0);
+		return (cmd->error = 1, 0);
 	while (1)
 	{
-		write(STDIN_FILENO,"> ", 2);
-		buffer = get_next_line(STDIN_FILENO);
-		if (buffer)
+		buffer = readline("> ");
+		if (g_sigint)
+			return (sigint_heredoc(shell, cmd, buffer, fd));
+		if (!buffer)
+			return ((void)close(fd), 1);
+		if (!ft_strncmp(delimiter, buffer, ft_strlen(delimiter)))
 		{
-			if (!ft_strncmp(delimiter, buffer, ft_strlen(delimiter))
-				&& buffer[ft_strlen(delimiter)] == '\n')
-			{
-				free(buffer);
-				break ;
-			}
-			write(fd, buffer, ft_strlen(buffer));
 			free(buffer);
+			break ;
 		}
+		write(fd, buffer, ft_strlen(buffer));
+		write(fd, "\n", 1);
+		free(buffer);
 	}
-	close(fd);
+	return ((void)close(fd), 0);
 }
 
-void	open_infile(t_cmd *cmd, t_file *filenode)
+static void	open_infile(t_cmd *cmd, t_file *filenode)
 {
 	int	fd;
 
@@ -57,7 +56,7 @@ void	open_infile(t_cmd *cmd, t_file *filenode)
 	close(fd);
 }
 
-void	open_outfile(t_cmd *cmd, t_file *filenode)
+static void	open_outfile(t_cmd *cmd, t_file *filenode)
 {
 	int	fd;
 
@@ -74,22 +73,22 @@ void	open_outfile(t_cmd *cmd, t_file *filenode)
 	close(fd);
 }
 
-void	open_file(t_cmd *cmd, t_list *lst)
+static void	open_file(t_cmd *cmd, t_list *lst)
 {
-    t_file  *filenode;
+	t_file	*filenode;
 
-    if (!lst->content)
-        return (cmd->error = 1, (void)0);
-    filenode = (t_file *)lst->content;
-    if (filenode->type == HEREDOC || filenode->type == REDIRIN)
+	if (!lst->content)
+		return (cmd->error = 1, (void)0);
+	filenode = (t_file *)lst->content;
+	if (filenode->type == HEREDOC || filenode->type == REDIRIN)
 		open_infile(cmd, filenode);
-    else if (filenode->type == REDIROUT || filenode->type == REDIRAPPEND)
+	else if (filenode->type == REDIROUT || filenode->type == REDIRAPPEND)
 		open_outfile(cmd, filenode);
 }
 
 void	handle_fd(t_astnode *n)
 {
-    t_list  *tmp;
+	t_list	*tmp;
 
 	if (n->pipein != -1)
 	{
@@ -103,24 +102,10 @@ void	handle_fd(t_astnode *n)
 		close(n->pipeout);
 		n->pipeout = -1;
 	}
-    tmp = n->cmd->lstfiles;
-    while (tmp)
-    {
-        open_file(n->cmd, tmp);
-        tmp = tmp->next;
-    }
-}
-
-void	parent_close_pipe(t_astnode *n)
-{
-	if (n->pipein != -1)
+	tmp = n->cmd->lstfiles;
+	while (tmp)
 	{
-		close(n->pipein);
-		n->pipein = -1;
-	}
-	if (n->pipeout != -1)
-	{
-		close(n->pipeout);
-		n->pipeout = -1;
+		open_file(n->cmd, tmp);
+		tmp = tmp->next;
 	}
 }

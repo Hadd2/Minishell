@@ -6,7 +6,7 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:43:35 by habernar          #+#    #+#             */
-/*   Updated: 2024/09/19 21:15:04 by habernar         ###   ########.fr       */
+/*   Updated: 2024/09/23 19:01:58 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,19 +16,21 @@ static t_astnode	*parse_command(t_shell *shell, char **str)
 {
 	char	*s;
 	char	*cmd;
+	int		len;
+	int		i;
 
 	s = *str;
 	skip_whitespace(str);
 	skip_quotes(str);
 	skip_whitespace(str);
-	int len =  *str - s;
+	len = *str - s;
 	cmd = malloc(sizeof(char) * (len + 1));
 	if (!cmd)
 	{
 		perror("malloc");
 		return (shell->parse_error = 1, (t_astnode *)0);
 	}
-	int i = 0;
+	i = 0;
 	while (i < len)
 	{
 		*(cmd + i++) = *s++;
@@ -61,7 +63,6 @@ static t_astnode	*parse_parenthese(t_shell *shell, char **str)
 
 static t_astnode	*parse_pipe(t_shell *shell, char **str)
 {
-
 	t_astnode	*left;
 	t_astnode	*right;
 
@@ -73,7 +74,6 @@ static t_astnode	*parse_pipe(t_shell *shell, char **str)
 	if (left && (*(*str) == '|' && *(*str + 1) != '|'))
 	{
 		(*str)++;
-		//if (nothing_to_parse(*str, '|'))
 		if (nothing_to_parse(*str))
 			return (shell->parse_error = 1, left);
 		right = parse_pipe(shell, str);
@@ -93,14 +93,14 @@ t_astnode	*parse_logical(t_shell *shell, char **str)
 	skip_whitespace(str);
 	left = parse_pipe(shell, str);
 	skip_whitespace(str);
-	if (left && ((*(*str) == '&' && *(*str + 1) == '&') || (*(*str) == '|' && *(*str + 1) == '|')))
+	if (left && ((*(*str) == '&' && *(*str + 1) == '&')
+			|| (*(*str) == '|' && *(*str + 1) == '|')))
 	{
 		if (*(*str) == '&')
 			type = LOGICAL_AND;
 		else
 			type = LOGICAL_OR;
 		(*str) += 2;
-		//if (nothing_to_parse(*str, *(*str - 2)))
 		if (nothing_to_parse(*str))
 			return (shell->parse_error = 1, left);
 		right = parse_logical(shell, str);

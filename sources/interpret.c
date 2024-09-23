@@ -6,34 +6,56 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:42:48 by habernar          #+#    #+#             */
-/*   Updated: 2024/09/19 20:33:17 by habernar         ###   ########.fr       */
+/*   Updated: 2024/09/23 19:09:16 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	wait_command(t_shell *shell, t_cmd *cmd)
+static void	parent_close_pipe(t_astnode *n)
+{
+	if (n->pipein != -1)
+	{
+		close(n->pipein);
+		n->pipein = -1;
+	}
+	if (n->pipeout != -1)
+	{
+		close(n->pipeout);
+		n->pipeout = -1;
+	}
+}
+
+static void	wait_command(t_shell *shell, t_cmd *cmd)
 {
 	int	status;
 
 	if (wait(&status) == cmd->pid)
 	{
-		if (WIFEXITED(status))
+		if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
+		{
+			write(STDOUT_FILENO, "\n", 1);
+			g_sigint = 0;
+			shell->exit_code = 130;
+		}
+		else if (WIFEXITED(status))
 			shell->exit_code = WEXITSTATUS(status);
 		else
 			shell->exit_code = 128 + WTERMSIG(status);
 	}
+	setup_signal();
 }
 
 /* debug */
-void 	print_cmd(t_cmd *cmd)
+void	print_cmd(t_cmd *cmd)
 {
-    t_list  *tmp;
-    t_file  *fnode;
+    t_list	*tmp;
+    t_file	*fnode;
+	int		i;
 
 	if (cmd->params)
 	{
-		int i = 0;
+		i = 0;
 		while (cmd->params[i])
         {
 			printf("param: %d, %s\n",i, cmd->params[i]);
@@ -53,7 +75,7 @@ void 	print_cmd(t_cmd *cmd)
     }
 }
 
-void	execute_cmd(t_shell *shell, t_astnode *n)
+static void	execute_cmd(t_shell *shell, t_astnode *n)
 {
 	make_command(shell, n);
 	//print_cmd(n->cmd);
@@ -73,23 +95,24 @@ void	execute_cmd(t_shell *shell, t_astnode *n)
 	{
 		handle_fd(n);
 		shell->exit_code = execve(n->cmd->path, n->cmd->params, shell->env);
-        perror("execve");
+		perror("execve");
 		exit_shell(shell);
 	}
 	else
 	{
+		signal(SIGINT, SIG_IGN);
 		parent_close_pipe(n);
 		wait_command(shell, n->cmd);
 	}
 }
 
-void	execute_pipe(t_shell *shell, t_astnode *n)
+static void	execute_pipe(t_shell *shell, t_astnode *n)
 {
 	int			pipefd[2];
 
 	if (pipe(pipefd) == -1)
 	{
-        perror("pipe");
+		perror("pipe");
 		return (shell->exit_code = 1, (void)0);
 	}
 	find_all_leaf_left(n, pipefd[1]);
@@ -98,7 +121,7 @@ void	execute_pipe(t_shell *shell, t_astnode *n)
 	ast_interpret(shell, n->right);
 }
 
-void ast_interpret(t_shell *shell, t_astnode *n)
+void	ast_interpret(t_shell *shell, t_astnode *n)
 {
 	if (!n)
 		return ;

@@ -6,7 +6,7 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:42:54 by habernar          #+#    #+#             */
-/*   Updated: 2024/09/19 21:15:36 by habernar         ###   ########.fr       */
+/*   Updated: 2024/09/23 19:41:12 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,7 @@ char	**make_params(char *str)
 	return (ret);
 }
 
-char	*make_path(t_shell  *shell, char *cmdname)
+char	*make_path(t_shell *shell, char *cmdname)
 {
 	char	**paths;
 	char	*path;
@@ -125,13 +125,13 @@ t_cmd	*init_command(void)
 	c = (t_cmd *)malloc(sizeof(t_cmd));
 	if (!c)
 	{
-        perror("malloc");
+		perror("malloc");
 		return (0);
 	}
-    c->error = 0;
+	c->error = 0;
 	c->path = 0;
 	c->params = 0;
-    c->lstfiles = 0;
+	c->lstfiles = 0;
 	return (c);
 }
 
@@ -140,24 +140,23 @@ void	make_command(t_shell *shell, t_astnode *n)
 	n->cmd = init_command();
 	if (!n->cmd)
 		return (n->cmd->error = 1, (void)0);
-	get_redirs(n->cmd, n->ps);
+	get_redirs(shell, n->cmd, n->ps);
 	remove_redirs(n->ps);
 	remove_whitespace(&n->ps);
-	printf("%s$\n",n->ps);
 	if (!*n->ps || nothing_to_parse(n->ps))
-        return (n->cmd->error = 1, (void)0);
+		return (n->cmd->error = 1, (void)0);
 	n->cmd->params = make_params(n->ps);
 	if (!n->cmd->params || !*n->cmd->params)
 	{
-        printf("Error: failed to generate command parameters\n");
-        return (n->cmd->error = 1, (void)0);
+		perror("malloc");
+		return (n->cmd->error = 1, (void)0);
 	}
 	n->cmd->path = make_path(shell, n->cmd->params[0]);
 	if (!n->cmd->path)
 	{
-        printf("bash: %s: command not found\n", n->cmd->params[0]);
-        return (n->cmd->error = 1, (void)0);
+		printf("bash: %s : command not found\n", n->cmd->params[0]);
+		return (n->cmd->error = 1, shell->exit_code = 127, (void)0);
 	}
 	expand_quotes(n->cmd->params);
-	expand_env_variables(shell ,n->cmd->params);
+	expand_env_variables(shell, n->cmd->params);
 }

@@ -6,7 +6,7 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:43:14 by habernar          #+#    #+#             */
-/*   Updated: 2024/09/19 21:09:14 by habernar         ###   ########.fr       */
+/*   Updated: 2024/09/23 19:16:15 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,31 +25,31 @@ void	free_tab(char **tab)
 	free(tab);
 }
 
-void del_filenode(void *content)
+void	del_filenode(void *content)
 {
-    t_file *fnode;
+	t_file	*fnode;
 
-    fnode = (t_file *)content;
+	fnode = (t_file *)content;
 	if (!fnode)
-		return;
+		return ;
 	if (fnode->type == HEREDOC)
 		unlink(TMP_FILENAME);
 	if (fnode->name)
-        free(fnode->name);
-    free(fnode);
+		free(fnode->name);
+	free(fnode);
 }
 
-void 	free_cmd(t_cmd *cmd)
+void	free_cmd(t_cmd *cmd)
 {
 	if (!cmd)
 		return ;
 	if (cmd->params)
 		free_tab(cmd->params);
-    if (cmd->lstfiles)
-        ft_lstclear(&cmd->lstfiles, del_filenode);
-    if (cmd->path)
+	if (cmd->lstfiles)
+		ft_lstclear(&cmd->lstfiles, del_filenode);
+	if (cmd->path)
 		free(cmd->path);
-    free(cmd);
+	free(cmd);
 }
 
 void	free_ast(t_astnode *n)

@@ -6,7 +6,7 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:42:35 by habernar          #+#    #+#             */
-/*   Updated: 2024/09/19 21:15:19 by habernar         ###   ########.fr       */
+/*   Updated: 2024/09/23 19:44:28 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,19 +18,20 @@
 # include <unistd.h>
 # include <sys/wait.h>
 # include <fcntl.h>
+# include <signal.h>
 # include <string.h>
 # include <stdbool.h>
 # include <readline/readline.h>
+# include <readline/history.h>
+# include <termios.h>
 # include "../includes/libft.h"
 # define ASCII_SPACE ' '
 # define TMP_FILENAME "ASJU43fs8a8i@#98jsa"
 # define HT_MAX_LOAD 0.75
+# define HEREDOC_EOF "bash: warming: <here-document>\
+	found end of file instead of \"%s\"\n"
 
-# ifdef DEBUG
-    #define DEBUG_LOG(fmt, ...) printf("DEBUG: " fmt "\n", ##__VA_ARGS__)
-# else
-    #define DEBUG_LOG(fmt, ...) // Ne rien faire si DEBUG n'est pas défini
-# endif
+extern volatile sig_atomic_t	g_sigint;
 
 typedef enum e_ftype
 {
@@ -42,9 +43,9 @@ typedef enum e_ftype
 
 typedef struct s_file
 {
-    t_ftype type;
-    char    *name;
-}   t_file;
+	t_ftype	type;
+	char	*name;
+}	t_file;
 
 typedef enum e_nodetype
 {
@@ -56,26 +57,26 @@ typedef enum e_nodetype
 
 typedef struct s_item
 {
-    char	*key;
-    char	*value;
+	char	*key;
+	char	*value;
 	bool	tombstone;
 }	t_item;
 
 typedef struct s_hashtable
 {
-    int		size;
-    int		count;
-    t_item	**items;
+	int		size;
+	int		count;
+	t_item	**items;
 }	t_hashtable;
 
 typedef struct s_cmd
 {
 	int		pid;
 	int		exitcode;
-    int     error;
+	int		error;
 	char	*path;
 	char	**params;
-    t_list  *lstfiles;
+	t_list	*lstfiles;
 }	t_cmd;
 
 typedef struct s_astnode
@@ -101,7 +102,7 @@ typedef struct s_shell
 }	t_shell;
 
 /* ast */
-t_astnode	*ast_make_node(t_shell *shell,int type, t_astnode *left, t_astnode *right);
+t_astnode	*ast_make_node(t_shell *s, int type, t_astnode *l, t_astnode *r);
 t_astnode	*ast_make_cmd(t_shell *shell, char *s);
 void		find_right_leftmost(t_astnode *n, int fd);
 void		find_all_leaf_left(t_astnode *n, int fd);
@@ -126,21 +127,19 @@ int			only_capital_letter(char *str);
 void		remove_whitespace(char **str);
 
 /*	interpret */
-void		execute_cmd(t_shell *shell, t_astnode *n);
-void		execute_pipe(t_shell *shell, t_astnode *n);
 void		ast_interpret(t_shell *shell, t_astnode *n);
 
 /* command */
 void		make_command(t_shell *shell, t_astnode *n);
 
 /* redir */
-void		get_redirs(t_cmd *cmd, char *str);
+void		get_redirs(t_shell *shell, t_cmd *cmd, char *str);
 char		*remove_redirs(char *str);
 int			skip_whitespace(char **str);
 
 /* free */
 void		free_tab(char **tab);
-void 		free_cmd(t_cmd *cmd);
+void		free_cmd(t_cmd *cmd);
 void		free_ast(t_astnode *n);
 void		exit_shell(t_shell *shell);
 
@@ -156,11 +155,14 @@ void		hashtable_resize(t_hashtable *ht);
 bool		hashtable_insert(t_hashtable *ht, char *k, char *v);
 
 /* file */
-void		get_here_doc(t_cmd *cmd, char *delimiter);
-void		open_file(t_cmd *cmd, t_list *listnode);
+int			get_here_doc(t_shell *shell, t_cmd *cmd, char *delimiter);
 void		handle_fd(t_astnode *n);
-void		parent_close_pipe(t_astnode *n);
+
+/* signal */
+void		setup_signal(void);
+void		setup_signal(void);
+int			sigint_heredoc(t_shell *shell, t_cmd *cmd, char *buffer, int fd);
 
 /* debug */
-void 		print_ast(t_astnode *n);
+void		print_ast(t_astnode *n);
 #endif

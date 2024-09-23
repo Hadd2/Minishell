@@ -1,5 +1,5 @@
 NAME=minishell
-CC=gcc
+CC=cc
 CFLAGS=-Wall -Wextra -Werror -g3
 LIB_PATH=libft/
 LIBFT= ${LIB_PATH}/libft.a
@@ -18,6 +18,7 @@ SRC_FILES = ast.c \
 			free.c \
 			env_variable.c \
 			string.c \
+			signal.c \
 			file.c \
 			redir.c
 SRC_OBJ = ${addprefix ${SRC_PATH}, ${SRC_FILES}}
