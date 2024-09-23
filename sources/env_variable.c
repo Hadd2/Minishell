@@ -6,7 +6,7 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:45:47 by habernar          #+#    #+#             */
-/*   Updated: 2024/09/23 19:18:38 by habernar         ###   ########.fr       */
+/*   Updated: 2024/09/23 20:28:39 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,8 +48,7 @@ static char	*expand_alpha(t_shell *shell, char *str, char *dsign)
 	free(key);
 	if (!item || !item->value)
 		return (erase_alpha(str, dsign));
-	i = ft_strlen(str) - i + ft_strlen(item->value) + 1;
-	s = (char *)malloc(sizeof(char) * i);
+	s = (char *)malloc((ft_strlen(str) - i + ft_strlen(item->value) + 1));
 	if (!s)
 		return (0);
 	*s = 0;
@@ -85,7 +84,7 @@ static char	*expanded_string(t_shell *shell, char *str, char *dsign)
 {
 	if (*(dsign + 1) && *(dsign + 1) == '?')
 		return (expand_exit_value(shell, str, dsign));
-	else if (*(dsign + 1) && ft_isalpha(*(dsign + 1)))
+	else if (*(dsign + 1) && ft_isalnum(*(dsign + 1)))
 		return (expand_alpha(shell, str, dsign));
 	else
 		return (0);
@@ -106,6 +105,8 @@ void	expand_env_variables(t_shell *shell, char **tab)
 			if (tab[1][0] != '\'')
 			{
 				new = expanded_string(shell, tab[i], dollarsign);
+				printf("%s\n", tab[i]);
+				printf("%s\n", new);
 				if (new)
 				{
 					free(tab[i]);
