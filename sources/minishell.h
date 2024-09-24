@@ -6,7 +6,7 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:42:35 by habernar          #+#    #+#             */
-/*   Updated: 2024/09/23 19:44:28 by habernar         ###   ########.fr       */
+/*   Updated: 2024/09/24 19:36:29 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -160,9 +160,9 @@ void		handle_fd(t_astnode *n);
 
 /* signal */
 void		setup_signal(void);
-void		setup_signal(void);
 int			sigint_heredoc(t_shell *shell, t_cmd *cmd, char *buffer, int fd);
 
 /* debug */
 void		print_ast(t_astnode *n);
+void		print_cmd(t_cmd *cmd);
 #endif

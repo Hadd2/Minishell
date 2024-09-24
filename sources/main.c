@@ -6,7 +6,7 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:43:29 by habernar          #+#    #+#             */
-/*   Updated: 2024/09/23 19:30:57 by habernar         ###   ########.fr       */
+/*   Updated: 2024/09/24 11:09:49 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,6 +91,7 @@ int	main(int argc, char **argv, char **env)
 			free(shell.cl);
 			continue ;
 		}
+		add_history(shell.cl);
 		shell.parse_error = 0;
 		shell.headcl = shell.cl;
 		shell.ast = parse_logical(&shell, &shell.cl);

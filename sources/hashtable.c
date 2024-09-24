@@ -6,7 +6,7 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:43:21 by habernar          #+#    #+#             */
-/*   Updated: 2024/09/23 14:52:02 by habernar         ###   ########.fr       */
+/*   Updated: 2024/09/24 20:03:04 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,10 +69,7 @@ void	hashtable_resize(t_hashtable *ht)
 
 	new_table = (t_item **)malloc(sizeof(t_item *) * ht->size * 2);
 	if (!new_table)
-	{
-		perror("malloc");
-		return ;
-	}
+		return (perror("malloc"));
 	i = 0;
 	while (i < ht->size * 2)
 		new_table[i++] = 0;
@@ -106,7 +103,7 @@ bool	hashtable_insert(t_hashtable *ht, char *k, char *v)
 	if (entry)
 	{
 		free(entry->value);
-		entry->value = strdup(v);
+		entry->value = ft_strdup(v);
 		entry->tombstone = false;
 		return (true);
 	}

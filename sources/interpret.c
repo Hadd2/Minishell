@@ -6,7 +6,7 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:42:48 by habernar          #+#    #+#             */
-/*   Updated: 2024/09/23 19:09:16 by habernar         ###   ########.fr       */
+/*   Updated: 2024/09/24 19:47:41 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,8 @@ static void	wait_command(t_shell *shell, t_cmd *cmd)
 		else
 			shell->exit_code = 128 + WTERMSIG(status);
 	}
+	if (shell->exit_code == 131)
+		write(STDOUT_FILENO, "Quit (core dumped)\n", 20);
 	setup_signal();
 }
 
@@ -87,12 +89,11 @@ static void	execute_cmd(t_shell *shell, t_astnode *n)
     */
 	n->cmd->pid = fork();
 	if (n->cmd->pid == -1)
-	{
-        perror("fork");
-		return (shell->exit_code = 1, (void)0);
-	}
+		return ((void)perror("fork"), shell->exit_code = 1, (void)0);
 	if (n->cmd->pid == 0)
 	{
+		signal(SIGQUIT, SIG_DFL);
+		signal(SIGINT, SIG_DFL);
 		handle_fd(n);
 		shell->exit_code = execve(n->cmd->path, n->cmd->params, shell->env);
 		perror("execve");

@@ -6,7 +6,7 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:43:14 by habernar          #+#    #+#             */
-/*   Updated: 2024/09/23 19:16:15 by habernar         ###   ########.fr       */
+/*   Updated: 2024/09/24 12:02:16 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,7 @@ void	free_ast(t_astnode *n)
 
 void	exit_shell(t_shell *shell)
 {
+	rl_clear_history();
 	if (shell->headcl)
 		free(shell->headcl);
 	if (shell->ast)
