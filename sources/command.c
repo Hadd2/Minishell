@@ -6,11 +6,48 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:42:54 by habernar          #+#    #+#             */
-/*   Updated: 2024/09/24 15:29:41 by habernar         ###   ########.fr       */
+/*   Updated: 2024/09/26 15:38:48 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+void 	rm_quotes(char *str)
+{
+	char	quotes;
+	char	*head;
+	char	*tmp;
+
+	quotes = 0;
+	head = str;
+	tmp = head;
+	while (*str)
+	{
+		if ((*str == '\'' || *str == '\"') && quotes == 0)
+			quotes = *str++;
+		else if (*str == quotes)
+		{
+			quotes = 0;
+			str++;
+		}
+		else
+			*tmp++ = *str++;
+	}
+	*tmp = 0;
+	str = head;
+}
+
+void	remove_quotes(char **tab)
+{
+	int		i;
+
+	i = 0;
+	while (tab && tab[i])
+	{
+		rm_quotes(tab[i]);
+		i++;
+	}
+}
 
 void	expand_quotes(char **tab)
 {
@@ -159,4 +196,5 @@ void	make_command(t_shell *shell, t_astnode *n)
 	}
 	expand_quotes(n->cmd->params);
 	expand_env_variables(shell, n->cmd->params);
+	remove_quotes(n->cmd->params);
 }

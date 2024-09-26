@@ -6,7 +6,7 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:43:39 by habernar          #+#    #+#             */
-/*   Updated: 2024/09/23 19:44:51 by habernar         ###   ########.fr       */
+/*   Updated: 2024/09/26 16:33:59 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,9 @@ void	get_redirs(t_shell *shell, t_cmd *cmd, char *str)
 {
 	while (*str)
 	{
+		skip_quotes(&str);
+		if (!*str)
+			return ;
 		if (*str == '<')
 		{
 			if (*(str + 1) && *(str + 1) == '<')
@@ -91,11 +94,17 @@ char	*remove_redirs(char *str)
 {
 	int		i;
 	int		head;
-
+	char  *og = str;
 	i = 0;
 	while (*(str + i))
 	{
-		if (*(str + i) == '<' || *(str + i) == '>')
+		skip_quotes(&og);
+		/*
+		skip_quotes(&str);
+		if (!*str)
+			return (og) ;
+		*/
+		if (*og && (*(str + i) == '<' || *(str + i) == '>'))
 		{
 			head = i++;
 			if (!ft_strncmp(str + i - 1, "<<", 2) || !ft_strncmp(str + i - 1, ">>", 2))
