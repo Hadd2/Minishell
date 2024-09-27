@@ -6,7 +6,7 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:42:54 by habernar          #+#    #+#             */
-/*   Updated: 2024/09/26 15:38:48 by habernar         ###   ########.fr       */
+/*   Updated: 2024/09/27 22:19:57 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -196,5 +196,6 @@ void	make_command(t_shell *shell, t_astnode *n)
 	}
 	expand_quotes(n->cmd->params);
 	expand_env_variables(shell, n->cmd->params);
+	expand_wildcard(n->cmd);
 	remove_quotes(n->cmd->params);
 }

@@ -6,7 +6,7 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:42:35 by habernar          #+#    #+#             */
-/*   Updated: 2024/09/24 19:36:29 by habernar         ###   ########.fr       */
+/*   Updated: 2024/09/27 22:14:48 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,10 +24,13 @@
 # include <readline/readline.h>
 # include <readline/history.h>
 # include <termios.h>
+# include <stdint.h>
+# include <dirent.h>
 # include "../includes/libft.h"
 # define ASCII_SPACE ' '
 # define TMP_FILENAME "ASJU43fs8a8i@#98jsa"
 # define HT_MAX_LOAD 0.75
+# define ALPHSIZE 255
 # define HEREDOC_EOF "bash: warming: <here-document>\
 	found end of file instead of \"%s\"\n"
 
@@ -54,6 +57,18 @@ typedef enum e_nodetype
 	PIPE,
 	CMD
 }	t_nodetype;
+
+typedef struct s_buffer
+{
+	char	s[256];
+	int		i;
+}	t_buffer;
+
+typedef struct s_trie
+{
+	struct s_trie	*children[ALPHSIZE];
+	bool			isword;
+}	t_trie;
 
 typedef struct s_item
 {
@@ -161,6 +176,20 @@ void		handle_fd(t_astnode *n);
 /* signal */
 void		setup_signal(void);
 int			sigint_heredoc(t_shell *shell, t_cmd *cmd, char *buffer, int fd);
+
+/* trie */
+t_trie		*trie_create(void);
+void		trie_insert(t_trie **root, char *str);
+bool		trie_search(t_trie *node, char *target);
+void		trie_free(t_trie *node);
+void		search_files(t_trie **root);
+
+/* wildcard */
+void		expand_wildcard(t_cmd *cmd);
+
+/* tab */
+int			tab_size(char **tab);
+void		tab_append(char ***tab, t_buffer *buffer);
 
 /* debug */
 void		print_ast(t_astnode *n);

@@ -20,6 +20,9 @@ SRC_FILES = ast.c \
 			string.c \
 			signal.c \
 			file.c \
+			trie.c \
+			wildcard.c \
+			tab.c \
 			redir.c
 SRC_OBJ = ${addprefix ${SRC_PATH}, ${SRC_FILES}}
 
