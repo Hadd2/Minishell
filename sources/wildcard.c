@@ -6,7 +6,7 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 22:05:31 by habernar          #+#    #+#             */
-/*   Updated: 2024/09/27 22:20:59 by habernar         ###   ########.fr       */
+/*   Updated: 2024/09/28 17:11:56 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,6 @@ void	find_match(t_trie *node, char *pattern, t_buffer *b, char ***res)
 		return (b->s[b->i] = 0, tab_append(res, b));
 	if (*pattern == '*')
 	{
-		find_match(node, pattern + 1, b, res);
 		x = 0;
 		while (x < ALPHSIZE)
 		{
@@ -51,6 +50,7 @@ void	find_match(t_trie *node, char *pattern, t_buffer *b, char ***res)
 			}
 			x++;
 		}
+		find_match(node, pattern + 1, b, res);
 	}
 	else if (node->children[(uint8_t) * pattern])
 	{
@@ -111,7 +111,7 @@ void	expand_wildcard(t_cmd *cmd)
 		{
 			res = match_wildcard(cmd->params[i], root);
 			if (!res)
-				return (cmd->error = 1, (void)0);
+				return (cmd->error = 1, trie_free(root), (void)0);
 			cmd->params = expand_parameters(cmd->params, res, i);
 		}
 		i++;

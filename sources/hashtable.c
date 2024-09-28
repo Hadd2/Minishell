@@ -6,7 +6,7 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:43:21 by habernar          #+#    #+#             */
-/*   Updated: 2024/09/24 20:03:04 by habernar         ###   ########.fr       */
+/*   Updated: 2024/09/28 16:47:57 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,12 +67,9 @@ void	hashtable_resize(t_hashtable *ht)
 	int		i;
 	int		j;
 
-	new_table = (t_item **)malloc(sizeof(t_item *) * ht->size * 2);
+	new_table = (t_item **)ft_calloc(sizeof(t_item *), ht->size * 2);
 	if (!new_table)
 		return (perror("malloc"));
-	i = 0;
-	while (i < ht->size * 2)
-		new_table[i++] = 0;
 	i = 0;
 	while (i < ht->size)
 	{

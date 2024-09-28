@@ -23,6 +23,8 @@ SRC_FILES = ast.c \
 			trie.c \
 			wildcard.c \
 			tab.c \
+			quotes.c \
+			debug.c \
 			redir.c
 SRC_OBJ = ${addprefix ${SRC_PATH}, ${SRC_FILES}}
 

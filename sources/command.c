@@ -6,101 +6,11 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:42:54 by habernar          #+#    #+#             */
-/*   Updated: 2024/09/27 22:19:57 by habernar         ###   ########.fr       */
+/*   Updated: 2024/09/28 15:23:18 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-void 	rm_quotes(char *str)
-{
-	char	quotes;
-	char	*head;
-	char	*tmp;
-
-	quotes = 0;
-	head = str;
-	tmp = head;
-	while (*str)
-	{
-		if ((*str == '\'' || *str == '\"') && quotes == 0)
-			quotes = *str++;
-		else if (*str == quotes)
-		{
-			quotes = 0;
-			str++;
-		}
-		else
-			*tmp++ = *str++;
-	}
-	*tmp = 0;
-	str = head;
-}
-
-void	remove_quotes(char **tab)
-{
-	int		i;
-
-	i = 0;
-	while (tab && tab[i])
-	{
-		rm_quotes(tab[i]);
-		i++;
-	}
-}
-
-void	expand_quotes(char **tab)
-{
-	int	i;
-	char *str;
-	char quotes;
-
-	i = 0;
-	while (tab && tab[i])
-	{
-		if (ft_strchr(tab[i], '\'') != 0)
-		{
-			str = tab[i];
-			while (*str)
-			{
-				if (*str == '\'')
-				{
-					quotes = *str++;
-					while (*str && *str != quotes)
-					{
-						if (*str == 31)
-							*str = ASCII_SPACE;
-						str++;
-					}
-					if (*str == quotes)
-						quotes = 0;
-				}
-				str++;
-			}
-		}
-		if (ft_strchr(tab[i], '\"') != 0)
-		{
-			str = tab[i];
-			while (*str)
-			{
-				if (*str == '\"')
-				{
-					quotes = *str++;
-					while (*str && *str != quotes)
-					{
-						if (*str == 31)
-							*str = ASCII_SPACE;
-						str++;
-					}
-					if (*str == quotes)
-						quotes = 0;
-				}
-				str++;
-			}
-		}
-		i++;
-	}
-}
 
 char	**make_params(char *str)
 {

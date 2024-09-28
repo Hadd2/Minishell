@@ -6,7 +6,7 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:42:35 by habernar          #+#    #+#             */
-/*   Updated: 2024/09/27 22:14:48 by habernar         ###   ########.fr       */
+/*   Updated: 2024/09/28 16:32:33 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -190,6 +190,11 @@ void		expand_wildcard(t_cmd *cmd);
 /* tab */
 int			tab_size(char **tab);
 void		tab_append(char ***tab, t_buffer *buffer);
+
+/* quotes */
+void		remove_quotes(char **tab);
+void		expand_quotes(char **tab);
+int			ignore_quotes(char *str);
 
 /* debug */
 void		print_ast(t_astnode *n);

@@ -6,7 +6,7 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:45:47 by habernar          #+#    #+#             */
-/*   Updated: 2024/09/24 19:21:33 by habernar         ###   ########.fr       */
+/*   Updated: 2024/09/28 15:38:29 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,7 @@ void	expand_env_variables(t_shell *shell, char **tab)
 			{
 				free(tab[i]);
 				tab[i] = new;
-				continue;
+				continue ;
 			}
 		}
 		i++;

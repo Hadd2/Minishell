@@ -6,7 +6,7 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:43:29 by habernar          #+#    #+#             */
-/*   Updated: 2024/09/27 22:18:53 by habernar         ###   ########.fr       */
+/*   Updated: 2024/09/28 17:23:19 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,19 @@ static int	parsable(char *str)
 	return (!ascii['\\'] && !ascii[';'] && ascii['\''] % 2 == 0 && ascii['\"'] % 2 == 0 && ascii['('] == ascii[')']);
 }
 
+static void	do_logic(t_shell *shell)
+{
+	add_history(shell->cl);
+	shell->parse_error = 0;
+	shell->headcl = shell->cl;
+	shell->ast = parse_logical(shell, &shell->cl);
+	if (shell->parse_error == 0)
+		ast_interpret(shell, shell->ast);
+	free(shell->headcl);
+	free_ast(shell->ast);
+	shell->ast = 0;
+	shell->headcl = 0;
+}
 
 int	main(int argc, char **argv, char **env)
 {
@@ -85,22 +98,13 @@ int	main(int argc, char **argv, char **env)
 			continue ;
 		}
 		if (!shell.cl)
-			break;
+			break ;
 		if (!parsable(shell.cl))
 		{
 			free(shell.cl);
 			continue ;
 		}
-		add_history(shell.cl);
-		shell.parse_error = 0;
-		shell.headcl = shell.cl;
-		shell.ast = parse_logical(&shell, &shell.cl);
-		if (shell.parse_error == 0)
-			ast_interpret(&shell, shell.ast);
-		free(shell.headcl);
-		free_ast(shell.ast);
-		shell.ast = 0;
-		shell.headcl = 0;
+		do_logic(&shell);
 	}
 	exit_shell(&shell);
 }

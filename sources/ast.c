@@ -6,7 +6,7 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:43:05 by habernar          #+#    #+#             */
-/*   Updated: 2024/09/23 19:20:00 by habernar         ###   ########.fr       */
+/*   Updated: 2024/09/28 15:40:27 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,29 +72,4 @@ void	find_all_leaf_left(t_astnode *n, int fd)
 		find_all_leaf_left(n->left, fd);
 	else if (n->right)
 		find_all_leaf_left(n->right, fd);
-}
-
-/* debug */
-void	print_ast(t_astnode *n)
-{
-	if (!n)
-		return ;
-	if (n->type == LOGICAL_AND)
-		printf("ast_node logical AND\n");
-	if (n->type == LOGICAL_OR)
-		printf("ast_node logical OR\n");
-	if (n->type == PIPE)
-		printf("ast_node PIPE\n");
-	if (n->type == CMD)
-		printf("ast_node CMD: %s\n", n->ps);
-	if (n->left)
-	{
-		printf("left node");
-		print_ast(n->left);
-	}
-	if (n->right)
-	{
-		printf("right node");
-		print_ast(n->right);
-	}
 }

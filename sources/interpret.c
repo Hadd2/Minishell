@@ -6,7 +6,7 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:42:48 by habernar          #+#    #+#             */
-/*   Updated: 2024/09/24 19:47:41 by habernar         ###   ########.fr       */
+/*   Updated: 2024/09/28 16:02:14 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,39 +48,10 @@ static void	wait_command(t_shell *shell, t_cmd *cmd)
 	setup_signal();
 }
 
-/* debug */
-void	print_cmd(t_cmd *cmd)
-{
-    t_list	*tmp;
-    t_file	*fnode;
-	int		i;
-
-	if (cmd->params)
-	{
-		i = 0;
-		while (cmd->params[i])
-        {
-			printf("param: %d, %s\n",i, cmd->params[i]);
-            i++;
-        }
-	}
-	if (cmd->path)
-		printf("path:%s\n", cmd->path);
-    tmp = cmd->lstfiles;
-    while (tmp)
-    {
-        if (!tmp->content)
-            return ;
-        fnode = (t_file *)tmp->content;
-		printf("type:%d\tname:%s\n", fnode->type, fnode->name);
-        tmp = tmp->next;
-    }
-}
-
 static void	execute_cmd(t_shell *shell, t_astnode *n)
 {
 	make_command(shell, n);
-	//print_cmd(n->cmd);
+	print_cmd(n->cmd);
 	if (n->cmd->error)
 		return ;
     /*
