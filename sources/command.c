@@ -6,11 +6,28 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:42:54 by habernar          #+#    #+#             */
-/*   Updated: 2024/09/28 15:23:18 by habernar         ###   ########.fr       */
+/*   Updated: 2024/09/29 12:19:12 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+static bool	is_directory(t_shell *shell, t_cmd *cmd)
+{
+	struct stat	pathstat;
+
+	if (!stat(cmd->params[0], &pathstat))
+	{
+		if (S_ISDIR(pathstat.st_mode))
+		{
+			printf("bash : %s : is a directory\n", cmd->params[0]);
+			cmd->error = 1;
+			shell->exit_code = 126;
+			return (true);
+		}
+	}
+	return (false);
+}
 
 char	**make_params(char *str)
 {
@@ -93,15 +110,15 @@ void	make_command(t_shell *shell, t_astnode *n)
 	if (!*n->ps || nothing_to_parse(n->ps))
 		return (n->cmd->error = 1, (void)0);
 	n->cmd->params = make_params(n->ps);
-	if (!n->cmd->params || !*n->cmd->params)
-	{
-		perror("malloc");
+	if (!n->cmd->params || !*n->cmd->params || is_directory(shell, n->cmd))
 		return (n->cmd->error = 1, (void)0);
-	}
 	n->cmd->path = make_path(shell, n->cmd->params[0]);
 	if (!n->cmd->path)
 	{
-		printf("bash: %s : command not found\n", n->cmd->params[0]);
+		if (access(n->cmd->params[0], F_OK))
+			printf(MSG_ERROR_FILEORDIR, n->cmd->params[0]);
+		else
+			printf("bash : %s : command not found\n", n->cmd->params[0]);
 		return (n->cmd->error = 1, shell->exit_code = 127, (void)0);
 	}
 	expand_quotes(n->cmd->params);

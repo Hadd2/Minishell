@@ -6,7 +6,7 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:42:35 by habernar          #+#    #+#             */
-/*   Updated: 2024/09/28 16:32:33 by habernar         ###   ########.fr       */
+/*   Updated: 2024/09/29 12:19:08 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,9 +26,11 @@
 # include <termios.h>
 # include <stdint.h>
 # include <dirent.h>
+# include <sys/stat.h>
 # include "../includes/libft.h"
 # define ASCII_SPACE ' '
 # define TMP_FILENAME "ASJU43fs8a8i@#98jsa"
+# define MSG_ERROR_FILEORDIR "bash : %s : no such file or directory\n"
 # define HT_MAX_LOAD 0.75
 # define ALPHSIZE 255
 # define HEREDOC_EOF "bash: warming: <here-document>\
