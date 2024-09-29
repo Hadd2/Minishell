@@ -6,7 +6,7 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:42:54 by habernar          #+#    #+#             */
-/*   Updated: 2024/09/29 12:19:12 by habernar         ###   ########.fr       */
+/*   Updated: 2024/09/29 13:11:25 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ static bool	is_directory(t_shell *shell, t_cmd *cmd)
 	return (false);
 }
 
-char	**make_params(char *str)
+static char	**make_params(char *str)
 {
 	char	**ret;
 	char	quotes;
@@ -57,7 +57,7 @@ char	**make_params(char *str)
 	return (ret);
 }
 
-char	*make_path(t_shell *shell, char *cmdname)
+static char	*make_path(t_shell *shell, char *cmdname)
 {
 	char	**paths;
 	char	*path;
@@ -82,7 +82,7 @@ char	*make_path(t_shell *shell, char *cmdname)
 	return (free_tab(paths), (char *)0);
 }
 
-t_cmd	*init_command(void)
+static t_cmd	*init_command(void)
 {
 	t_cmd	*c;
 
@@ -115,7 +115,7 @@ void	make_command(t_shell *shell, t_astnode *n)
 	n->cmd->path = make_path(shell, n->cmd->params[0]);
 	if (!n->cmd->path)
 	{
-		if (access(n->cmd->params[0], F_OK))
+		if (ft_strchr(n->cmd->params[0], '/'))
 			printf(MSG_ERROR_FILEORDIR, n->cmd->params[0]);
 		else
 			printf("bash : %s : command not found\n", n->cmd->params[0]);
