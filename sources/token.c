@@ -6,7 +6,7 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/09 19:14:18 by habernar          #+#    #+#             */
-/*   Updated: 2024/10/09 20:00:24 by habernar         ###   ########.fr       */
+/*   Updated: 2024/10/09 21:54:09 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ static void	token_error(t_tok prev, t_tok curr)
 		"<", ">", "(", ")", 0};
 
 	if ((prev.type >= T_DSUP && prev.type <= T_SINF) && curr.type == T_EOF)
-		printf("bash: syntax error near symbol \" newline \"\n");
+		printf("bash: syntax error near unexpected symbol \" newline \"\n");
 	else if (curr.type != T_EOF)
 		printf("bash: syntax error near unexpected symbol \" %s \"\n",
 			tokens[curr.type]);
@@ -58,7 +58,7 @@ static bool	rules_broken(t_toktype curr, t_toktype prev)
 		|| (is_redirection(prev) && curr != T_ALNUM)
 		|| ((prev == T_LEFTP && is_operator(curr))
 			|| (prev != T_ALNUM && curr == T_RIGHTP))
-		|| (curr == prev && prev != T_ALNUM && curr != T_ALNUM))
+		|| (curr == prev && (prev != T_ALNUM || prev != T_RIGHTP)))
 		return (true);
 	return (false);
 }

@@ -6,7 +6,7 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:45:47 by habernar          #+#    #+#             */
-/*   Updated: 2024/10/09 20:02:58 by habernar         ###   ########.fr       */
+/*   Updated: 2024/10/09 22:28:47 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,26 +90,20 @@ static char	*expanded_string(t_shell *shell, char *str, char *dsign)
 		return (0);
 }
 
-void	expand_env_variables(t_shell *shell, char **tab)
+char	*expand_env_variables(t_shell *shell, char *str)
 {
 	char	*new;
 	char	*dollarsign;
-	int		i;
 
-	i = 1;
-	while (tab && tab[i])
+	dollarsign = ft_strchr(str, '$');
+	if (dollarsign  && !in_single_quotes(str, dollarsign))
 	{
-		dollarsign = ft_strchr(tab[i], '$');
-		if (dollarsign && !in_single_quotes(tab[i], dollarsign))
+		new = expanded_string(shell, str, dollarsign);
+		if (new)
 		{
-			new = expanded_string(shell, tab[i], dollarsign);
-			if (new)
-			{
-				free(tab[i]);
-				tab[i] = new;
-				continue ;
-			}
+			free(str);
+			return (expand_env_variables(shell, new));
 		}
-		i++;
 	}
+	return (str);
 }

@@ -6,7 +6,7 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:42:54 by habernar          #+#    #+#             */
-/*   Updated: 2024/09/29 13:11:25 by habernar         ###   ########.fr       */
+/*   Updated: 2024/10/09 22:26:59 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,6 +104,7 @@ void	make_command(t_shell *shell, t_astnode *n)
 	n->cmd = init_command();
 	if (!n->cmd)
 		return (n->cmd->error = 1, (void)0);
+	n->ps = expand_env_variables(shell, n->ps);
 	get_redirs(shell, n->cmd, n->ps);
 	remove_redirs(n->ps);
 	remove_whitespace(&n->ps);
@@ -112,6 +113,9 @@ void	make_command(t_shell *shell, t_astnode *n)
 	n->cmd->params = make_params(n->ps);
 	if (!n->cmd->params || !*n->cmd->params || is_directory(shell, n->cmd))
 		return (n->cmd->error = 1, (void)0);
+	expand_quotes(n->cmd->params);
+	expand_wildcard(n->cmd);
+	remove_quotes(n->cmd->params);
 	n->cmd->path = make_path(shell, n->cmd->params[0]);
 	if (!n->cmd->path)
 	{
@@ -121,8 +125,4 @@ void	make_command(t_shell *shell, t_astnode *n)
 			printf("bash : %s : command not found\n", n->cmd->params[0]);
 		return (n->cmd->error = 1, shell->exit_code = 127, (void)0);
 	}
-	expand_quotes(n->cmd->params);
-	expand_env_variables(shell, n->cmd->params);
-	expand_wildcard(n->cmd);
-	remove_quotes(n->cmd->params);
 }

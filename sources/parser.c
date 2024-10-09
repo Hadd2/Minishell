@@ -6,7 +6,7 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:43:35 by habernar          #+#    #+#             */
-/*   Updated: 2024/09/23 19:01:58 by habernar         ###   ########.fr       */
+/*   Updated: 2024/10/09 22:18:25 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,11 +49,13 @@ static t_astnode	*parse_parenthese(t_shell *shell, char **str)
 	{
 		(*str)++;
 		head = parse_logical(shell, str);
+		/*
 		if (*(*str) != ')')
 		{
-			printf("Error: parsor detected missing ')'\n");
+			//printf("Error: parsor detected missing ')'\n");
 			return (shell->parse_error = 1, head);
 		}
+		*/
 		(*str)++;
 	}
 	else

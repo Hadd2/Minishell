@@ -6,7 +6,7 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:42:35 by habernar          #+#    #+#             */
-/*   Updated: 2024/10/09 20:20:31 by habernar         ###   ########.fr       */
+/*   Updated: 2024/10/09 23:38:52 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -158,7 +158,7 @@ int			skip_whitespace(char **str);
 void		skip_quotes(char **str);
 
 /* env variable */
-void		expand_env_variables(t_shell *shell, char **tab);
+char		*expand_env_variables(t_shell *shell, char *str);
 
 /* string */
 char		*ft_strndup(char *str, int len);
@@ -237,4 +237,5 @@ bool		is_redirection(t_toktype type);
 /* debug */
 void		print_ast(t_astnode *n);
 void		print_cmd(t_cmd *cmd);
+
 #endif

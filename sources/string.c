@@ -6,7 +6,7 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:46:04 by habernar          #+#    #+#             */
-/*   Updated: 2024/10/09 20:03:17 by habernar         ###   ########.fr       */
+/*   Updated: 2024/10/09 21:46:24 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,8 @@ int	in_single_quotes(char *str, char *c)
 {
 	int	count;
 
-	while (str < c)
+	count = 0;
+	while (*str && str < c)
 	{
 		if (*str == '\'')
 			count++;

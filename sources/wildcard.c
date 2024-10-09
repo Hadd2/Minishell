@@ -6,7 +6,7 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 22:05:31 by habernar          #+#    #+#             */
-/*   Updated: 2024/10/09 19:35:06 by habernar         ###   ########.fr       */
+/*   Updated: 2024/10/09 23:38:21 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ void	find_match(t_trie *node, char *pattern, t_buffer *b, char ***res)
 			{
 				b->s[b->i++] = x;
 				find_match(node->children[x], pattern, b, res);
-				b->i--;
+				b->s[b->i--] = 0;
 			}
 			x++;
 		}
@@ -108,7 +108,7 @@ void	expand_wildcard(t_cmd *cmd)
 
 	root = 0;
 	search_files(&root);
-	i = 1;
+	i = 0;
 	while (cmd->params && cmd->params[i])
 	{
 		if (contains_wildcard(cmd->params[i]))
