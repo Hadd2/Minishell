@@ -6,7 +6,7 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:42:35 by habernar          #+#    #+#             */
-/*   Updated: 2024/10/09 23:38:52 by habernar         ###   ########.fr       */
+/*   Updated: 2024/10/09 23:42:43 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@
 # include "../includes/libft.h"
 # define ASCII_SPACE ' '
 # define TMP_FILENAME "ASJU43fs8a8i@#98jsa"
-# define PATH "/usr/bin:/bin:/usr/sbin:/sbin"
+# define PATH "usr/local/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
 # define ENV "/usr/bin/env"
 # define MSG_ERROR_FILEORDIR "bash : %s : no such file or directory\n"
 # define HT_MAX_LOAD 0.75
