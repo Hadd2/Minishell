@@ -6,7 +6,7 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:42:48 by habernar          #+#    #+#             */
-/*   Updated: 2024/09/28 16:02:14 by habernar         ###   ########.fr       */
+/*   Updated: 2024/10/09 19:55:36 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ static void	execute_cmd(t_shell *shell, t_astnode *n)
 	print_cmd(n->cmd);
 	if (n->cmd->error)
 		return ;
-    /*
+	/*
     if (is_builtin(...))
         return (exec_builtin(...))
     */

@@ -6,7 +6,7 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 22:12:21 by habernar          #+#    #+#             */
-/*   Updated: 2024/09/27 22:12:48 by habernar         ###   ########.fr       */
+/*   Updated: 2024/10/09 19:35:26 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,4 +43,18 @@ void	tab_append(char ***tab, t_buffer *buffer)
 	new[i] = 0;
 	free(*tab);
 	*tab = new;
+}
+
+bool	tab_contains(char **tab, char *str)
+{
+	int	i;
+
+	i = 0;
+	while (tab && tab[i])
+	{
+		if (ft_strncmp(tab[i], str, ft_strlen(str)) == 0)
+			return (true);
+		i++;
+	}
+	return (false);
 }

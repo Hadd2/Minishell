@@ -6,7 +6,7 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:42:35 by habernar          #+#    #+#             */
-/*   Updated: 2024/09/29 12:19:08 by habernar         ###   ########.fr       */
+/*   Updated: 2024/10/09 20:20:31 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,8 @@
 # include "../includes/libft.h"
 # define ASCII_SPACE ' '
 # define TMP_FILENAME "ASJU43fs8a8i@#98jsa"
+# define PATH "/usr/bin:/bin:/usr/sbin:/sbin"
+# define ENV "/usr/bin/env"
 # define MSG_ERROR_FILEORDIR "bash : %s : no such file or directory\n"
 # define HT_MAX_LOAD 0.75
 # define ALPHSIZE 255
@@ -51,6 +53,27 @@ typedef struct s_file
 	t_ftype	type;
 	char	*name;
 }	t_file;
+
+typedef enum e_toktype
+{
+	T_UNINIT = -1,
+	T_AND,
+	T_OR,
+	T_PIPE,
+	T_DSUP,
+	T_DINF,
+	T_SSUP,
+	T_SINF,
+	T_LEFTP,
+	T_RIGHTP,
+	T_ALNUM,
+	T_EOF
+}	t_toktype;
+
+typedef struct s_tok
+{
+	t_toktype	type;
+}	t_tok;
 
 typedef enum e_nodetype
 {
@@ -142,6 +165,7 @@ char		*ft_strndup(char *str, int len);
 char		*ft_strjoin_slash(char *s1, char *s2, char sep);
 int			only_capital_letter(char *str);
 void		remove_whitespace(char **str);
+int			in_single_quotes(char *str, char *c);
 
 /*	interpret */
 void		ast_interpret(t_shell *shell, t_astnode *n);
@@ -153,6 +177,9 @@ void		make_command(t_shell *shell, t_astnode *n);
 void		get_redirs(t_shell *shell, t_cmd *cmd, char *str);
 char		*remove_redirs(char *str);
 int			skip_whitespace(char **str);
+
+/* init */
+void		init_shell(t_shell *shell, int argc, char **argv, char **env);
 
 /* free */
 void		free_tab(char **tab);
@@ -192,11 +219,20 @@ void		expand_wildcard(t_cmd *cmd);
 /* tab */
 int			tab_size(char **tab);
 void		tab_append(char ***tab, t_buffer *buffer);
+bool		tab_contains(char **tab, char *str);
 
 /* quotes */
 void		remove_quotes(char **tab);
 void		expand_quotes(char **tab);
 int			ignore_quotes(char *str);
+
+/* token */
+bool		check_token(char *str);
+
+/* token utils */
+bool		ft_isalnumsup(char c);
+bool		is_operator(t_toktype type);
+bool		is_redirection(t_toktype type);
 
 /* debug */
 void		print_ast(t_astnode *n);

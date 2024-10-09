@@ -6,7 +6,7 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:45:47 by habernar          #+#    #+#             */
-/*   Updated: 2024/09/28 15:38:29 by habernar         ###   ########.fr       */
+/*   Updated: 2024/10/09 20:02:58 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,7 @@ void	expand_env_variables(t_shell *shell, char **tab)
 	while (tab && tab[i])
 	{
 		dollarsign = ft_strchr(tab[i], '$');
-		if (dollarsign)
+		if (dollarsign && !in_single_quotes(tab[i], dollarsign))
 		{
 			new = expanded_string(shell, tab[i], dollarsign);
 			if (new)

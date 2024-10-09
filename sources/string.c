@@ -6,7 +6,7 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:46:04 by habernar          #+#    #+#             */
-/*   Updated: 2024/09/23 18:58:47 by habernar         ###   ########.fr       */
+/*   Updated: 2024/10/09 20:03:17 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,4 +75,17 @@ void	remove_whitespace(char **str)
 		(*str)++;
 	}
 	*str = h;
+}
+
+int	in_single_quotes(char *str, char *c)
+{
+	int	count;
+
+	while (str < c)
+	{
+		if (*str == '\'')
+			count++;
+		str++;
+	}
+	return (count % 2 != 0);
 }

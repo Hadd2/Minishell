@@ -6,7 +6,7 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 22:05:31 by habernar          #+#    #+#             */
-/*   Updated: 2024/09/28 17:11:56 by habernar         ###   ########.fr       */
+/*   Updated: 2024/10/09 19:35:06 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,8 @@ void	find_match(t_trie *node, char *pattern, t_buffer *b, char ***res)
 {
 	uint8_t	x;
 
-	if (!*pattern && node->isword)
-		return (b->s[b->i] = 0, tab_append(res, b));
+	if (!*pattern && node->isword && !tab_contains(*res, b->s))
+		return (tab_append(res, b));
 	if (*pattern == '*')
 	{
 		x = 0;
@@ -63,9 +63,13 @@ char	**match_wildcard(char *str, t_trie *root)
 {
 	char		**res;
 	t_buffer	buffer;
+	int			i;
 
 	res = 0;
 	buffer.i = 0;
+	i = 0;
+	while (i < 256)
+		buffer.s[i++] = 0;
 	find_match(root, str, &buffer, &res);
 	return (res);
 }

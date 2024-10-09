@@ -6,7 +6,7 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:43:29 by habernar          #+#    #+#             */
-/*   Updated: 2024/09/29 11:16:49 by habernar         ###   ########.fr       */
+/*   Updated: 2024/10/09 20:31:57 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,39 +14,12 @@
 
 volatile sig_atomic_t	g_sigint = 0;
 
-static void	init_shell(t_shell *shell, int argc, char **argv, char **env)
-{
-	int		i;
-	char	*k;
-	char	*v;
-
-	(void)argc, (void)argv;
-	shell->exit_code = 0;
-	shell->parse_error = 0;
-	shell->cl = 0;
-	shell->headcl = 0;
-	shell->ast = 0;
-	shell->ht = hashtable_init();
-	shell->env = env;
-	i = 0;
-	while (shell->ht && env && env[i])
-	{
-		k = ft_strndup(env[i], ft_strchr(env[i], '=') - env[i]);
-		v = ft_strdup(ft_strchr(env[i], '=') + 1);
-		hashtable_insert(shell->ht, k, v);
-		i++;
-	}
-	setup_signal();
-}
-
-static int	parsable(char *str)
+static int	valid_char(char *str)
 {
 	int		ascii[127];
-	int		i;
 	char	c;
+	int		i;
 
-	if (!str || (str && nothing_to_parse(str)))
-		return (0);
 	i = 0;
 	while (i < 127)
 		ascii[i++] = 0;
@@ -59,12 +32,20 @@ static int	parsable(char *str)
 			while (*str && *str != c)
 				str++;
 			if (*str == c)
-				ascii[(int)*str++]++;
+				ascii[(int)*str]++;
 		}
-		else
-			str++;
+		str++;
 	}
-	return (!ascii['\\'] && !ascii[';'] && ascii['\''] % 2 == 0 && ascii['\"'] % 2 == 0 && ascii['('] == ascii[')']);
+	return (!ascii['\\'] && !ascii[';'] && ascii['\''] % 2 == 0
+		&& ascii['\"'] % 2 == 0 && ascii['('] == ascii[')']);
+}
+
+static int	parsable(char *str)
+{
+	if (!str || nothing_to_parse(str) || !check_token(str)
+		|| !valid_char(str))
+		return (0);
+	return (1);
 }
 
 static void	do_logic(t_shell *shell)
