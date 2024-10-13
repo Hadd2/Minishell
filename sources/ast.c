@@ -6,7 +6,7 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:43:05 by habernar          #+#    #+#             */
-/*   Updated: 2024/09/28 15:40:27 by habernar         ###   ########.fr       */
+/*   Updated: 2024/10/13 19:24:51 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,6 @@ t_astnode	*ast_make_node(t_shell *shell, int type, t_astnode *l, t_astnode *r)
 	n->right = r;
 	n->ps = 0;
 	n->cmd = 0;
-	n->pipein = -1;
-	n->pipeout = -1;
 	return (n);
 }
 
@@ -47,29 +45,24 @@ t_astnode	*ast_make_cmd(t_shell *shell, char *s)
 	n->right = 0;
 	n->ps = s;
 	n->cmd = 0;
-	n->pipein = -1;
-	n->pipeout = -1;
 	return (n);
 }
 
-void	find_right_leftmost(t_astnode *n, int fd)
+void	erase_right_leftmost(t_astnode **n, int count)
 {
-	if (!n)
+	if (!*n)
 		return ;
-	if (n->left && n->type != CMD)
-		find_right_leftmost(n->left, fd);
-	if (n->type == CMD)
-		n->pipein = fd;
-}
-
-void	find_all_leaf_left(t_astnode *n, int fd)
-{
-	if (!n)
-		return ;
-	else if (n->type == CMD)
-		n->pipeout = fd;
-	else if (n->left)
-		find_all_leaf_left(n->left, fd);
-	else if (n->right)
-		find_all_leaf_left(n->right, fd);
+	if ((*n)->left && (*n)->type != CMD)
+		erase_right_leftmost(&(*n)->left, count + 1);
+	if ((*n)->right && (*n)->type != CMD && count > 0)
+		erase_right_leftmost(&(*n)->right, count + 1);
+	if ((*n)->type == CMD)
+	{
+		if ((*n)->cmd)
+			free_cmd((*n)->cmd);
+		if ((*n)->ps)
+			free((*n)->ps);
+		free(*n);
+		*n = 0;
+	}
 }

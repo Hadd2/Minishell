@@ -6,7 +6,7 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:42:54 by habernar          #+#    #+#             */
-/*   Updated: 2024/10/09 22:26:59 by habernar         ###   ########.fr       */
+/*   Updated: 2024/10/13 19:28:16 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ static bool	is_directory(t_shell *shell, t_cmd *cmd)
 	{
 		if (S_ISDIR(pathstat.st_mode))
 		{
-			printf("bash : %s : is a directory\n", cmd->params[0]);
+			printf("minishell : %s : is a directory\n", cmd->params[0]);
 			cmd->error = 1;
 			shell->exit_code = 126;
 			return (true);
@@ -122,7 +122,7 @@ void	make_command(t_shell *shell, t_astnode *n)
 		if (ft_strchr(n->cmd->params[0], '/'))
 			printf(MSG_ERROR_FILEORDIR, n->cmd->params[0]);
 		else
-			printf("bash : %s : command not found\n", n->cmd->params[0]);
+			printf("minishell : %s : command not found\n", n->cmd->params[0]);
 		return (n->cmd->error = 1, shell->exit_code = 127, (void)0);
 	}
 }

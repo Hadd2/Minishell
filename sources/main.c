@@ -6,7 +6,7 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:43:29 by habernar          #+#    #+#             */
-/*   Updated: 2024/10/09 20:31:57 by habernar         ###   ########.fr       */
+/*   Updated: 2024/10/13 21:03:35 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,7 @@ static void	do_logic(t_shell *shell)
 	shell->ast = parse_logical(shell, &shell->cl);
 	if (shell->parse_error == 0)
 		ast_interpret(shell, shell->ast);
+	//print_ast(shell->ast);
 	free(shell->headcl);
 	free_ast(shell->ast);
 	shell->ast = 0;
@@ -70,6 +71,8 @@ int	main(int argc, char **argv, char **env)
 	while (1)
 	{
 		shell.cl = readline("minishell$ ");
+		if (!shell.cl)
+			break ;
 		if (g_sigint)
 		{
 			shell.exit_code = 130;
@@ -78,8 +81,6 @@ int	main(int argc, char **argv, char **env)
 				free(shell.cl);
 			continue ;
 		}
-		if (!shell.cl)
-			break ;
 		if (!parsable(shell.cl))
 		{
 			free(shell.cl);

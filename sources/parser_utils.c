@@ -6,7 +6,7 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:43:42 by habernar          #+#    #+#             */
-/*   Updated: 2024/10/07 18:59:07 by habernar         ###   ########.fr       */
+/*   Updated: 2024/10/13 19:26:06 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,10 +22,6 @@ bool	nothing_to_parse(char *str)
 	head = str;
 	while (*str && is_whitespace(*str))
 		str++;
-	/*
-	if (!*str || (*str && is_delimiter(*str) && (*head != '(')))
-		return (true);
-	*/
 	return (false);
 }
 

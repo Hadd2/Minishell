@@ -6,7 +6,7 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:42:29 by habernar          #+#    #+#             */
-/*   Updated: 2024/10/09 20:31:47 by habernar         ###   ########.fr       */
+/*   Updated: 2024/10/13 18:33:48 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ int	get_here_doc(t_shell *shell, t_cmd *cmd, char *delimiter)
 		return (cmd->error = 1, 0);
 	while (1)
 	{
-		buffer = readline("> ");
+		buffer = get_next_line(STDIN_FILENO);
 		if (g_sigint)
 			return (sigint_heredoc(shell, cmd, buffer, fd));
 		if (!buffer)
@@ -49,7 +49,7 @@ static void	open_infile(t_cmd *cmd, t_file *filenode)
 		fd = open(filenode->name, O_RDONLY);
 	if (fd == -1)
 	{
-		printf("bash: %s: No such file or directory\n", filenode->name);
+		printf("minishell: %s: No such file or directory\n", filenode->name);
 		return (cmd->error = 1, (void)0);
 	}
 	dup2(fd, STDIN_FILENO);
@@ -66,7 +66,7 @@ static void	open_outfile(t_cmd *cmd, t_file *filenode)
 		fd = open(filenode->name, O_CREAT | O_TRUNC | O_WRONLY, 0666);
 	if (fd == -1)
 	{
-		printf("bash: %s: No such file or directory\n", filenode->name);
+		printf("minishell: %s: No such file or directory\n", filenode->name);
 		return (cmd->error = 1, (void)0);
 	}
 	dup2(fd, STDOUT_FILENO);
@@ -90,18 +90,6 @@ void	handle_fd(t_astnode *n)
 {
 	t_list	*tmp;
 
-	if (n->pipein != -1)
-	{
-		dup2(n->pipein, STDIN_FILENO);
-		close(n->pipein);
-		n->pipein = -1;
-	}
-	if (n->pipeout != -1)
-	{
-		dup2(n->pipeout, STDOUT_FILENO);
-		close(n->pipeout);
-		n->pipeout = -1;
-	}
 	tmp = n->cmd->lstfiles;
 	while (tmp)
 	{

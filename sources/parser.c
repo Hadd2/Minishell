@@ -49,13 +49,7 @@ static t_astnode	*parse_parenthese(t_shell *shell, char **str)
 	{
 		(*str)++;
 		head = parse_logical(shell, str);
-		/*
-		if (*(*str) != ')')
-		{
-			//printf("Error: parsor detected missing ')'\n");
-			return (shell->parse_error = 1, head);
-		}
-		*/
+		head = ast_make_node(shell, BRACKET, head, NULL);
 		(*str)++;
 	}
 	else

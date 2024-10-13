@@ -52,6 +52,8 @@ void	print_ast(t_astnode *n)
 		printf("ast_node PIPE\n");
 	if (n->type == CMD)
 		printf("ast_node CMD: %s\n", n->ps);
+	if (n->type == BRACKET)
+		printf("ast_node BRACKET\n");
 	if (n->left)
 	{
 		printf("left node");

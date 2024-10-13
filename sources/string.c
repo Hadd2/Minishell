@@ -84,6 +84,12 @@ int	in_single_quotes(char *str, char *c)
 	count = 0;
 	while (*str && str < c)
 	{
+		if (*str == '\"')
+		{
+			str++;
+			while (*str != '\"')
+				str++;
+		}
 		if (*str == '\'')
 			count++;
 		str++;

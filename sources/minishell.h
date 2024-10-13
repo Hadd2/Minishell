@@ -6,7 +6,7 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:42:35 by habernar          #+#    #+#             */
-/*   Updated: 2024/10/09 23:42:43 by habernar         ###   ########.fr       */
+/*   Updated: 2024/10/13 20:57:39 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,10 +32,10 @@
 # define TMP_FILENAME "ASJU43fs8a8i@#98jsa"
 # define PATH "usr/local/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
 # define ENV "/usr/bin/env"
-# define MSG_ERROR_FILEORDIR "bash : %s : no such file or directory\n"
+# define MSG_ERROR_FILEORDIR "minishell : %s : no such file or directory\n"
 # define HT_MAX_LOAD 0.75
 # define ALPHSIZE 255
-# define HEREDOC_EOF "bash: warming: <here-document>\
+# define HEREDOC_EOF "minishell: warming: <here-document>\
 	found end of file instead of \"%s\"\n"
 
 extern volatile sig_atomic_t	g_sigint;
@@ -80,7 +80,8 @@ typedef enum e_nodetype
 	LOGICAL_AND,
 	LOGICAL_OR,
 	PIPE,
-	CMD
+	CMD,
+	BRACKET
 }	t_nodetype;
 
 typedef struct s_buffer
@@ -122,8 +123,6 @@ typedef struct s_cmd
 typedef struct s_astnode
 {
 	int					type;
-	int					pipein;
-	int					pipeout;
 	char				*ps;
 	t_cmd				*cmd;
 	struct s_astnode	*left;
@@ -146,6 +145,9 @@ t_astnode	*ast_make_node(t_shell *s, int type, t_astnode *l, t_astnode *r);
 t_astnode	*ast_make_cmd(t_shell *shell, char *s);
 void		find_right_leftmost(t_astnode *n, int fd);
 void		find_all_leaf_left(t_astnode *n, int fd);
+void		erase_right_leftmost(t_astnode **n, int count);
+void		pipe_left_subtree(t_astnode *n, int fd);
+void		pipe_right_subtree(t_astnode *n, int fd);
 
 /* parse */
 t_astnode	*parse_logical(t_shell *shell, char **str);
@@ -205,6 +207,7 @@ void		handle_fd(t_astnode *n);
 /* signal */
 void		setup_signal(void);
 int			sigint_heredoc(t_shell *shell, t_cmd *cmd, char *buffer, int fd);
+void		wait_command(t_shell *shell, t_cmd *cmd);
 
 /* trie */
 t_trie		*trie_create(void);

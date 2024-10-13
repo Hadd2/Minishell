@@ -93,17 +93,21 @@ static char	*expanded_string(t_shell *shell, char *str, char *dsign)
 char	*expand_env_variables(t_shell *shell, char *str)
 {
 	char	*new;
-	char	*dollarsign;
+	int		i;
 
-	dollarsign = ft_strchr(str, '$');
-	if (dollarsign  && !in_single_quotes(str, dollarsign))
+	i = 0;
+	while (str[i])
 	{
-		new = expanded_string(shell, str, dollarsign);
-		if (new)
+		if (str[i] == '$' && !in_single_quotes(str, str + i))
 		{
-			free(str);
-			return (expand_env_variables(shell, new));
+			new = expanded_string(shell, str, str + i);
+			if (new)
+			{
+				free(str);
+				return (expand_env_variables(shell, new));
+			}
 		}
+		i++;
 	}
 	return (str);
 }

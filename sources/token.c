@@ -6,7 +6,7 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/09 19:14:18 by habernar          #+#    #+#             */
-/*   Updated: 2024/10/09 21:54:09 by habernar         ###   ########.fr       */
+/*   Updated: 2024/10/13 19:24:28 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,23 +42,24 @@ static void	token_error(t_tok prev, t_tok curr)
 		"<", ">", "(", ")", 0};
 
 	if ((prev.type >= T_DSUP && prev.type <= T_SINF) && curr.type == T_EOF)
-		printf("bash: syntax error near unexpected symbol \" newline \"\n");
+		printf("minishell: syntax error near unexpected symbol \
+			\" newline \"\n");
 	else if (curr.type != T_EOF)
-		printf("bash: syntax error near unexpected symbol \" %s \"\n",
+		printf("minishell: syntax error near unexpected symbol \" %s \"\n",
 			tokens[curr.type]);
 	else
-		printf("bash: syntax error near unexpected symbol \" %s \"\n",
+		printf("minishell: syntax error near unexpected symbol \" %s \"\n",
 			tokens[prev.type]);
 }
 
 static bool	rules_broken(t_toktype curr, t_toktype prev)
 {
 	if ((is_operator(curr) && prev == T_UNINIT)
-		|| (is_operator(prev) && curr == T_EOF)
+		|| (is_operator(prev) && (curr == T_EOF || curr == T_RIGHTP))
 		|| (is_redirection(prev) && curr != T_ALNUM)
-		|| ((prev == T_LEFTP && is_operator(curr))
-			|| (prev != T_ALNUM && curr == T_RIGHTP))
-		|| (curr == prev && (prev != T_ALNUM || prev != T_RIGHTP)))
+		|| (prev == T_LEFTP && is_operator(curr))
+		|| (prev == T_RIGHTP && curr == T_LEFTP)
+		|| (curr == prev && (prev >= T_AND && prev <= T_SINF)))
 		return (true);
 	return (false);
 }

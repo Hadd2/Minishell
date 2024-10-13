@@ -107,12 +107,13 @@ void	expand_wildcard(t_cmd *cmd)
 	t_trie	*root;
 
 	root = 0;
-	search_files(&root);
 	i = 0;
 	while (cmd->params && cmd->params[i])
 	{
 		if (contains_wildcard(cmd->params[i]))
 		{
+			if (!root)
+				search_files(&root);
 			res = match_wildcard(cmd->params[i], root);
 			if (!res)
 				return (cmd->error = 1, trie_free(root), (void)0);

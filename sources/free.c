@@ -6,7 +6,7 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:43:14 by habernar          #+#    #+#             */
-/*   Updated: 2024/09/24 12:02:16 by habernar         ###   ########.fr       */
+/*   Updated: 2024/10/13 19:17:54 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,16 +64,6 @@ void	free_ast(t_astnode *n)
 		free_cmd(n->cmd);
 	if (n->ps)
 		free(n->ps);
-	if (n->pipein != -1)
-	{
-		close(n->pipein);
-		n->pipein = -1;
-	}
-	if (n->pipeout != -1)
-	{
-		close(n->pipeout);
-		n->pipeout = -1;
-	}
 	free(n);
 	n = 0;
 }
