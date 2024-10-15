@@ -6,7 +6,7 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:43:29 by habernar          #+#    #+#             */
-/*   Updated: 2024/10/13 21:03:35 by habernar         ###   ########.fr       */
+/*   Updated: 2024/10/15 21:14:38 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,19 +31,21 @@ static int	valid_char(char *str)
 			c = *str++;
 			while (*str && *str != c)
 				str++;
-			if (*str == c)
+			if (*str && *str == c)
 				ascii[(int)*str]++;
 		}
-		str++;
+		if (*str)
+			str++;
 	}
 	return (!ascii['\\'] && !ascii[';'] && ascii['\''] % 2 == 0
-		&& ascii['\"'] % 2 == 0 && ascii['('] == ascii[')']);
+		&& ascii['\"'] % 2 == 0 && ascii['('] == ascii[')']
+		&& ascii['&'] != 1);
 }
 
 static int	parsable(char *str)
 {
-	if (!str || nothing_to_parse(str) || !check_token(str)
-		|| !valid_char(str))
+	if (!str || nothing_to_parse(str) || !valid_char(str)
+		|| !check_token(str))
 		return (0);
 	return (1);
 }

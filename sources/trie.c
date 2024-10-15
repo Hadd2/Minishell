@@ -6,7 +6,7 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 22:08:25 by habernar          #+#    #+#             */
-/*   Updated: 2024/09/27 22:10:03 by habernar         ###   ########.fr       */
+/*   Updated: 2024/10/15 20:08:54 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,8 +90,7 @@ void	search_files(t_trie **root)
 	file = readdir(dir);
 	while (file)
 	{
-		if (ft_strncmp(file->d_name, ".", ft_strlen(file->d_name))
-			&& ft_strncmp(file->d_name, "..", ft_strlen(file->d_name)))
+		if (*file->d_name && file->d_name[0] != '.')
 			trie_insert(root, file->d_name);
 		file = readdir(dir);
 	}

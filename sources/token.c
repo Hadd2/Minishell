@@ -6,7 +6,7 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/09 19:14:18 by habernar          #+#    #+#             */
-/*   Updated: 2024/10/13 19:24:28 by habernar         ###   ########.fr       */
+/*   Updated: 2024/10/15 19:33:14 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,13 +42,12 @@ static void	token_error(t_tok prev, t_tok curr)
 		"<", ">", "(", ")", 0};
 
 	if ((prev.type >= T_DSUP && prev.type <= T_SINF) && curr.type == T_EOF)
-		printf("minishell: syntax error near unexpected symbol \
-			\" newline \"\n");
+		printf("minishell: syntax error near unexpected token \" newline \"\n");
 	else if (curr.type != T_EOF)
-		printf("minishell: syntax error near unexpected symbol \" %s \"\n",
+		printf("minishell: syntax error near unexpected token \" %s \"\n",
 			tokens[curr.type]);
 	else
-		printf("minishell: syntax error near unexpected symbol \" %s \"\n",
+		printf("minishell: syntax error near unexpected token \" %s \"\n",
 			tokens[prev.type]);
 }
 

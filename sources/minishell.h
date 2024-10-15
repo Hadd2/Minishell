@@ -6,7 +6,7 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:42:35 by habernar          #+#    #+#             */
-/*   Updated: 2024/10/13 20:57:39 by habernar         ###   ########.fr       */
+/*   Updated: 2024/10/15 20:13:21 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,6 +136,9 @@ typedef struct s_shell
 	char		*cl;
 	char		*headcl;
 	char		**env;
+	int			argc;
+	char		**argv;
+	bool		no_env;
 	t_hashtable	*ht;
 	t_astnode	*ast;
 }	t_shell;
@@ -161,6 +164,8 @@ void		skip_quotes(char **str);
 
 /* env variable */
 char		*expand_env_variables(t_shell *shell, char *str);
+char		*erase_alpha(char *str, char *dsign);
+char		*erase_digit(char *str, char *dsign);
 
 /* string */
 char		*ft_strndup(char *str, int len);

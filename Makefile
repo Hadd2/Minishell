@@ -17,6 +17,7 @@ SRC_FILES = ast.c \
 			hashtable_utils.c \
 			free.c \
 			env_variable.c \
+			env_variable_utils.c \
 			string.c \
 			init.c \
 			signal.c \

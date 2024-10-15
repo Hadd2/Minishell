@@ -6,28 +6,36 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:45:47 by habernar          #+#    #+#             */
-/*   Updated: 2024/10/09 22:28:47 by habernar         ###   ########.fr       */
+/*   Updated: 2024/10/15 20:09:58 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static char	*erase_alpha(char *str, char *dsign)
+static char	*expand_digit(t_shell *shell, char *str, char *dsign)
 {
 	char	*s;
+	char	*nb_string;
 	int		i;
-	int		size;
+	int		nb;
 
 	i = 1;
-	while (*(dsign + i) && ft_isalnum(*(dsign + i)))
+	nb = 0;
+	while (*(dsign + i) && (ft_isdigit(*(dsign + i))))
+	{
+		nb = nb * 10 + *(dsign + i) - '0';
 		i++;
-	size = ft_strlen(str) - i + 1;
-	s = (char *)malloc(sizeof(char) * size);
+	}
+	if (nb > shell->argc || (!shell->argv || !shell->argv[nb]))
+		return (erase_digit(str, dsign));
+	nb_string = shell->argv[nb];
+	s = (char *)malloc((ft_strlen(str) - i + ft_strlen(nb_string) + 1));
 	if (!s)
 		return (0);
 	*s = 0;
 	ft_strlcat(s, str, dsign - str + 1);
-	ft_strlcat(s, dsign + i, size);
+	ft_strlcat(s, nb_string, ft_strlen(s) + ft_strlen(nb_string) + 1);
+	ft_strlcat(s, dsign + i, ft_strlen(s) + ft_strlen(dsign + i) + 1);
 	return (s);
 }
 
@@ -39,7 +47,7 @@ static char	*expand_alpha(t_shell *shell, char *str, char *dsign)
 	t_item	*item;
 
 	i = 1;
-	while (*(dsign + i) && ft_isalnum(*(dsign + i)))
+	while (*(dsign + i) && (ft_isalnum(*(dsign + i)) || *(dsign + i) == '_'))
 		i++;
 	key = ft_strndup(dsign + 1, i - 1);
 	if (!key)
@@ -84,7 +92,9 @@ static char	*expanded_string(t_shell *shell, char *str, char *dsign)
 {
 	if (*(dsign + 1) && *(dsign + 1) == '?')
 		return (expand_exit_value(shell, str, dsign));
-	else if (*(dsign + 1) && ft_isalnum(*(dsign + 1)))
+	else if (*(dsign + 1) && ft_isdigit(*(dsign + 1)))
+		return (expand_digit(shell, str, dsign));
+	else if (*(dsign + 1) && (ft_isalpha(*(dsign + 1)) || *(dsign + 1) == '_'))
 		return (expand_alpha(shell, str, dsign));
 	else
 		return (0);

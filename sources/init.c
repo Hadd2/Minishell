@@ -6,7 +6,7 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/09 20:05:43 by habernar          #+#    #+#             */
-/*   Updated: 2024/10/09 20:26:22 by habernar         ###   ########.fr       */
+/*   Updated: 2024/10/15 20:14:02 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ static void	create_env(t_shell *shell)
 	char	buffer[100];
 	char	*tmp;
 
+	shell->no_env = true;
 	hashtable_insert(shell->ht, ft_strdup("SHLVL"), ft_strdup("1"));
 	hashtable_insert(shell->ht, ft_strdup("_"), ft_strdup(ENV));
 	hashtable_insert(shell->ht, ft_strdup("PATH"), ft_strdup(PATH));
@@ -74,12 +75,14 @@ static void	init_env(t_shell *shell, char **env)
 
 void	init_shell(t_shell *shell, int argc, char **argv, char **env)
 {
-	(void)argc, (void)argv;
+	shell->argc = argc;
+	shell->argv = argv;
 	shell->exit_code = 0;
 	shell->parse_error = 0;
 	shell->cl = 0;
 	shell->headcl = 0;
 	shell->ast = 0;
+	shell->no_env = false;
 	shell->ht = hashtable_init();
 	shell->env = env;
 	init_env(shell, env);
