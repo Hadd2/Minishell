@@ -6,7 +6,7 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:43:29 by habernar          #+#    #+#             */
-/*   Updated: 2024/10/15 21:14:38 by habernar         ###   ########.fr       */
+/*   Updated: 2024/10/16 15:12:56 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,6 @@ static int	parsable(char *str)
 
 static void	do_logic(t_shell *shell)
 {
-	add_history(shell->cl);
 	shell->parse_error = 0;
 	shell->headcl = shell->cl;
 	shell->ast = parse_logical(shell, &shell->cl);
@@ -83,12 +82,11 @@ int	main(int argc, char **argv, char **env)
 				free(shell.cl);
 			continue ;
 		}
+		add_history(shell.cl);
 		if (!parsable(shell.cl))
-		{
 			free(shell.cl);
-			continue ;
-		}
-		do_logic(&shell);
+		else
+			do_logic(&shell);
 	}
 	exit_shell(&shell);
 }

@@ -6,7 +6,7 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/09 19:14:18 by habernar          #+#    #+#             */
-/*   Updated: 2024/10/15 19:33:14 by habernar         ###   ########.fr       */
+/*   Updated: 2024/10/16 15:19:13 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ static void	get_tok(char **str, t_tok *tok)
 	int			i;
 
 	skip_whitespace(str);
+	skip_quotes(str);
 	if (!str || !*str || !**str)
 		return (tok->type = T_EOF, (void)0);
 	if (ft_isalnumsup(**str))

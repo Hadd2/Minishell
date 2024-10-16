@@ -6,7 +6,7 @@
 /*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:42:29 by habernar          #+#    #+#             */
-/*   Updated: 2024/10/13 18:33:48 by habernar         ###   ########.fr       */
+/*   Updated: 2024/10/16 14:49:29 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ int	get_here_doc(t_shell *shell, t_cmd *cmd, char *delimiter)
 		return (cmd->error = 1, 0);
 	while (1)
 	{
-		buffer = get_next_line(STDIN_FILENO);
+		buffer = readline("> ");
 		if (g_sigint)
 			return (sigint_heredoc(shell, cmd, buffer, fd));
 		if (!buffer)
