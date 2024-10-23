@@ -3,25 +3,23 @@
 /*                                                        :::      ::::::::   */
 /*   interpret.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jarumuga <jarumuga@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:42:48 by habernar          #+#    #+#             */
-/*   Updated: 2024/10/15 20:33:37 by habernar         ###   ########.fr       */
+/*   Updated: 2024/10/23 19:27:27 by habernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+//print_cmd(n->cmd);
 static void	execute_cmd(t_shell *shell, t_astnode *n)
 {
 	make_command(shell, n);
-	//print_cmd(n->cmd);
 	if (n->cmd->error)
 		return ;
-	/*
-    if (is_builtin(...))
-        return (exec_builtin(...))
-    */
+	if (is_builtin(n->cmd->params[0]))
+		return (execute_builtin(shell, n), (void)0);
 	n->cmd->pid = fork();
 	if (n->cmd->pid == -1)
 		return ((void)perror("fork"), shell->exit_code = 1, (void)0);
@@ -87,7 +85,6 @@ static void	execute_pipe(t_shell *shell, t_astnode *n)
 		shell->exit_code = WEXITSTATUS(status);
 	else
 		shell->exit_code = 128 + WTERMSIG(status);
-	g_sigint = 0;
 }
 
 static void	execute_bracket(t_shell *shell, t_astnode *n)
@@ -110,7 +107,6 @@ static void	execute_bracket(t_shell *shell, t_astnode *n)
 			shell->exit_code = WEXITSTATUS(status);
 		else
 			shell->exit_code = 128 + WTERMSIG(status);
-		g_sigint = 0;
 	}
 }
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   command.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jarumuga <jarumuga@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:42:54 by habernar          #+#    #+#             */
-/*   Updated: 2024/10/15 21:14:06 by habernar         ###   ########.fr       */
+/*   Updated: 2024/10/15 22:11:29 by jarumuga         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,7 +117,8 @@ void	make_command(t_shell *shell, t_astnode *n)
 	expand_wildcard(n->cmd);
 	remove_quotes(n->cmd->params);
 	n->cmd->path = make_path(shell, n->cmd->params[0]);
-	if (!n->cmd->path || n->cmd->params[0][0] == 0)
+	if ((!n->cmd->path || n->cmd->params[0][0] == 0) \
+	&& !is_builtin(n->cmd->params[0]))
 	{
 		if (ft_strchr(n->cmd->params[0], '/'))
 			printf(MSG_ERROR_FILEORDIR, n->cmd->params[0]);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tab.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jarumuga <jarumuga@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 22:12:21 by habernar          #+#    #+#             */
-/*   Updated: 2024/10/09 23:27:18 by habernar         ###   ########.fr       */
+/*   Updated: 2024/10/16 20:21:44 by jarumuga         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ void	tab_append(char ***tab, t_buffer *buffer)
 		new[i] = (*tab)[i];
 		i++;
 	}
-	new[i++] = strdup(buffer->s);
+	new[i++] = ft_strdup(buffer->s);
 	new[i] = 0;
 	free(*tab);
 	*tab = new;

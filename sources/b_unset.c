@@ -1,31 +1,37 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   token_utils.c                                      :+:      :+:    :+:   */
+/*   b_unset.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jarumuga <jarumuga@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/09 19:37:17 by habernar          #+#    #+#             */
-/*   Updated: 2024/10/16 18:12:10 by jarumuga         ###   ########.fr       */
+/*   Created: 2024/09/24 19:27:43 by jarumuga          #+#    #+#             */
+/*   Updated: 2024/10/02 17:28:20 by jarumuga         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-bool	ft_isalnumsup(char c)
+// unset alone -> return
+// unset key -> delete the key in hastable
+void	b_unset(char **av, t_shell *shell)
 {
-	if (!(c == 0 || c == '(' || c == ')' || c == '>' || c == '<' || c == '&'
-			|| c == '|' || c == '\'' || c == '\"'))
-		return (true);
-	return (false);
-}
+	int		i;
+	char	*key;
 
-bool	is_operator(t_toktype type)
-{
-	return (type >= T_AND && type <= T_PIPE);
-}
-
-bool	is_redirection(t_toktype type)
-{
-	return (type >= T_DSUP && type <= T_SINF);
+	if (!av[1])
+	{
+		shell->exit_code = 0;
+		return ;
+	}
+	i = 1;
+	shell->exit_code = 0;
+	while (av[i])
+	{
+		key = av[i];
+		if (shell->ht)
+			hashtable_delete(shell->ht, key);
+		i++;
+	}
+	shell->exit_code = 0;
 }

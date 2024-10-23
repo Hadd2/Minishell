@@ -3,16 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jarumuga <jarumuga@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:42:35 by habernar          #+#    #+#             */
-/*   Updated: 2024/10/16 15:19:18 by habernar         ###   ########.fr       */
+/*   Updated: 2024/10/16 21:24:08 by jarumuga         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
+# include <limits.h>
+# include <errno.h>
 # include <stdio.h>
 # include <stdlib.h>
 # include <unistd.h>
@@ -35,7 +37,7 @@
 # define MSG_ERROR_FILEORDIR "minishell : %s : no such file or directory\n"
 # define HT_MAX_LOAD 0.75
 # define ALPHSIZE 255
-# define HEREDOC_EOF "minishell: warming: <here-document>\
+# define HEREDOC_EOF "minishell: warning: <here-document>\
 	found end of file instead of \"%s\"\n"
 
 extern volatile sig_atomic_t	g_sigint;
@@ -146,11 +148,28 @@ typedef struct s_shell
 /* ast */
 t_astnode	*ast_make_node(t_shell *s, int type, t_astnode *l, t_astnode *r);
 t_astnode	*ast_make_cmd(t_shell *shell, char *s);
-void		find_right_leftmost(t_astnode *n, int fd);
-void		find_all_leaf_left(t_astnode *n, int fd);
 void		erase_right_leftmost(t_astnode **n, int count);
-void		pipe_left_subtree(t_astnode *n, int fd);
-void		pipe_right_subtree(t_astnode *n, int fd);
+
+/* builtins bubble sort */
+int			compare_strings(const void *a, const void *b);
+void		bubble_sort(char **array, int size, \
+int (*cmp)(const void *, const void *));
+
+/* builtins */
+int			is_builtin(const char *cmd);
+void		execute_builtin(t_shell *shell, t_astnode *n);
+void		b_cd(char **av, t_hashtable *ht, t_shell *shell);
+void		b_echo(char **av, t_shell *shell);
+void		b_env(char **av, t_shell *shell);
+void		b_exit(char **av, t_shell *shell);
+void		b_export(char **av, t_shell *shell);
+void		b_pwd(char **av, t_shell *shell);
+void		b_unset(char **av, t_shell *shell);
+
+/* builtins utils */
+int			ft_strcmp(const char *s1, const char *s2);
+char		*hashtable_get(t_hashtable *ht, const char *k);
+int			is_str_whitespace(char **str);
 
 /* parse */
 t_astnode	*parse_logical(t_shell *shell, char **str);
@@ -183,7 +202,6 @@ void		make_command(t_shell *shell, t_astnode *n);
 /* redir */
 void		get_redirs(t_shell *shell, t_cmd *cmd, char *str);
 char		*remove_redirs(char *str);
-int			skip_whitespace(char **str);
 
 /* init */
 void		init_shell(t_shell *shell, int argc, char **argv, char **env);

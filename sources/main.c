@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: habernar <habernar@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jarumuga <jarumuga@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 22:43:29 by habernar          #+#    #+#             */
-/*   Updated: 2024/10/16 15:12:56 by habernar         ###   ########.fr       */
+/*   Updated: 2024/10/16 16:16:58 by jarumuga         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@ static int	parsable(char *str)
 	return (1);
 }
 
+//print_ast(shell->ast);
 static void	do_logic(t_shell *shell)
 {
 	shell->parse_error = 0;
@@ -57,7 +58,6 @@ static void	do_logic(t_shell *shell)
 	shell->ast = parse_logical(shell, &shell->cl);
 	if (shell->parse_error == 0)
 		ast_interpret(shell, shell->ast);
-	//print_ast(shell->ast);
 	free(shell->headcl);
 	free_ast(shell->ast);
 	shell->ast = 0;

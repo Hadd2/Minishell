@@ -59,7 +59,7 @@ SRC_FILES =	ft_isalpha.c \
 			ft_printf_parser.c \
 			ft_printf_scanner.c \
 			ft_printf_token.c \
-			ft_printf_utils.c 
+			ft_printf_utils.c
 
 OBJ_PATH = obj/
 OBJ_FILES = ${SRC_FILES:.c=.o}
@@ -68,19 +68,19 @@ OBJECTS = $(addprefix ${OBJ_PATH}, ${OBJ_FILES})
 all : ${NAME}
 
 ${NAME} : ${OBJECTS}
-	${AR} ${ARFLAGS} $@ $^
+	@${AR} ${ARFLAGS} $@ $^
 
 ${OBJ_PATH}%.o: ${SRC_PATH}%.c | ${OBJ_PATH}
-	${CC} ${CFLAGS} -c $< -o $@
+	@${CC} ${CFLAGS} -c $< -o $@
 
 ${OBJ_PATH}:
-	mkdir -p ${OBJ_PATH}
+	@mkdir -p ${OBJ_PATH}
 
 clean :
-	rm -rf ${OBJ_PATH}
+	@rm -rf ${OBJ_PATH}
 
 fclean : clean
-	rm -f ${NAME}
+	@rm -f ${NAME}
 
 re : fclean all
 
